@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">-->
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.5"   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
-    <display-name>RestfulWebService</display-name>
+    <display-name>IOPT_Server</display-name>
     <session-config>
         <session-timeout>
             30
@@ -13,7 +13,7 @@
    
     <servlet>
         <!--<servlet-name>jersey-serlvet</servlet-name>-->
-        <servlet-name>iot-server</servlet-name>
+        <servlet-name>IOPT-Server</servlet-name>
         <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
         <init-param>
             <param-name>jersey.config.server.provider.packages</param-name>
@@ -25,35 +25,6 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet> 
-<!--    <servlet-mapping>
-        <servlet-name>iot-server</servlet-name>
-        <url-pattern>/models/*</url-pattern>
-    </servlet-mapping>-->
-<!--    <servlet-mapping>   
-        <servlet-name>default</servlet-name>
-        <url-pattern>*.html</url-pattern>
-    </servlet-mapping>    -->
-    
-    
-<!--     All html files at any path 
-    <servlet-mapping>   
-        <servlet-name>default</servlet-name>
-        <url-pattern>*.html</url-pattern>
-    </servlet-mapping>-->
-    <!-- Specifically index.html at the root -->
-    
-<!--    <servlet>
-        <display-name>My JAX-RS Servlet</display-name>
-        <servlet-name>bat15.restful.requests.ApplicationConfig</servlet-name>
-        <init-param>
-            <param-name>javax.ws.rs.Application</param-name>
-            <param-value>bat15.restful.requests.ApplicationConfig</param-value>
-        </init-param>
-    </servlet>    
-    <servlet-mapping>
-        <servlet-name>iot-server</servlet-name>
-        <url-pattern>/*</url-pattern>
-    </servlet-mapping>      -->
-             
+
         
 </web-app>
