@@ -53,7 +53,7 @@ import javax.ws.rs.core.Request;
 @Path("/")
 public class ThingPropertyResource {
     
-    @Resource(lookup = "iot-server")
+    @Resource(lookup = "IOPT-Server")
     private Properties properties;
     
     @Context
@@ -69,8 +69,6 @@ public class ThingPropertyResource {
      * Creates a new instance of RestResource
      */
     public ThingPropertyResource() {
-        
-        
     }
 
     /**
@@ -212,14 +210,16 @@ public class ThingPropertyResource {
     public void putJson(JsonObject snapshot) {
         
         
-//        JsonArray models = snapshot.getJsonArray("Models");
-//        
-//        for(JsonValue model: models)
-//        {
-//            
-//            
-//            
-//        }
+        
+        
+        JsonArray models = snapshot.getJsonArray("Models");
+        
+        for(JsonValue model: models)
+        {
+            
+            
+            
+        }
 //        
 //        
 //	List<JsonObject> matchingItems = new ArrayList<JsonObject>();
@@ -230,6 +230,7 @@ public class ThingPropertyResource {
 //	}
 //        
 //        proc.putPropertyValue(data);
+
     } 
     
     

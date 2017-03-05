@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name="Script")
 public class Script {
+    
     @XmlElement(name="Name")
     String name;
     

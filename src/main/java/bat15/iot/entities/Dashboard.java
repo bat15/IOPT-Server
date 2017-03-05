@@ -17,10 +17,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name="Dashboard")
 public class Dashboard {
-    
-    @XmlElement(name="Name")
-    String name;
-    
+
     @XmlElement(name="Id")
     String id;
+    
+    @XmlElement(name="Parent")
+    Object parent;
+
+    @XmlElement(name="Views")
+    Object views;
+
+    
 }

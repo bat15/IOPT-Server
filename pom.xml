@@ -19,12 +19,12 @@
         <glassfish.pwdfile>glassfish.pwd</glassfish.pwdfile>  
         <glassfish.domain>193.32.20.242</glassfish.domain>   
         <glassfish.host>193.32.20.242</glassfish.host>
-        <glassfish.adminport>4848</glassfish.adminport>            
+        <glassfish.adminport>4848</glassfish.adminport>
                     
     </properties>
-    
-                    
-                    
+
+
+
     <dependencies>
             
         <dependency>

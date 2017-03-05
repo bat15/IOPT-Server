@@ -16,15 +16,15 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Павел
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name="IoTModel")
-public class IoTModel {
-    
-    @XmlElement(name="Objects")
-    ArrayList<IoTObject> objects;    
+@XmlRootElement(name="Object")
+public class Object {
+
+    @XmlElement(name="Properties")
+    ArrayList<Property> properties;
     
     @XmlElement(name="Name")
     String name;
     
     @XmlElement(name="Id")
-    String id;
+    String id; 
 }

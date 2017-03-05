@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Snapshot {
     
     @XmlElement(name="Models")
-    ArrayList<IoTModel> models;
+    ArrayList<Model> models;
     
     @XmlElement(name="Dashboards")
     ArrayList<Dashboard> dashboards;
