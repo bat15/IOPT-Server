@@ -77,22 +77,22 @@ public class Property {
     }    
     
     
-    public ArrayList<Script> getProperties()
+    public ArrayList<Script> getScripts()
     {
         return scripts;
     }    
     
-    public void setObjects(ArrayList<Script> scripts)
+    public void setScripts(ArrayList<Script> scripts)
     {
         this.scripts = scripts;
     }        
     
-    public void addObject(Script script)
+    public void addScript(Script script)
     {
         this.scripts.add(script);
     }
     
-    public void addAllObjects(ArrayList<Script> scripts)
+    public void addAllScripts(ArrayList<Script> scripts)
     {
         this.scripts.addAll(scripts);
     }

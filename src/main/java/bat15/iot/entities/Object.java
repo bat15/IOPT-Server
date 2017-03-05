@@ -53,17 +53,17 @@ public class Object {
         return properties;
     }    
     
-    public void setObjects(ArrayList<Property> properties)
+    public void setPropertiess(ArrayList<Property> properties)
     {
         this.properties = properties;
     }        
     
-    public void addObject(Property property)
+    public void addProperty(Property property)
     {
         this.properties.add(property);
     }
     
-    public void addAllObjects(ArrayList<Property> properties)
+    public void addAllProperties(ArrayList<Property> properties)
     {
         this.properties.addAll(properties);
     }

@@ -5,6 +5,7 @@
  */
 package bat15.iot.entities;
 
+import java.util.ArrayList;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -19,22 +20,66 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Dashboard {
 
     @XmlElement(name="Id")
-    String id;
+    protected String id;
     
     @XmlElement(name="Parent")
-    Object parent;
+    protected Object parent;
 
     @XmlElement(name="Mappings")
-    PropertyMap mappings;
+    protected ArrayList<PropertyMap> mappings;
 
     public class PropertyMap
     {
-        public Property property;
+        protected  Property property;
         
-        public boolean isControl;
+        protected  boolean isControl;
         
-        public int min;
+        protected  int min;
         
-        public int max;
+        protected  int max;
+        
+        
     }
+    
+    
+    public Object getParent()
+    {
+        return parent;
+    }
+    
+    public void setParent(Object parent)
+    {
+        this.parent = parent;
+    }
+    
+    public String getId()
+    {
+        return id;
+    }
+    
+    public void setId(String id)
+    {
+        this.id = id;
+    }    
+    
+    
+    public ArrayList<PropertyMap> getMappings()
+    {
+        return mappings;
+    }    
+    
+    public void setMappings(ArrayList<PropertyMap> mappings)
+    {
+        this.mappings = mappings;
+    }        
+    
+    public void addMapping(PropertyMap mapping)
+    {
+        this.mappings.add(mapping);
+    }
+    
+    public void addAllMappings(ArrayList<PropertyMap> mappings)
+    {
+        this.mappings.addAll(mappings);
+    }    
 }
