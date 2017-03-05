@@ -6,6 +6,7 @@
 package bat15.iot.entities;
 
 import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -27,4 +28,48 @@ public class Model {
     
     @XmlElement(name="Id")
     String id;
+    
+    
+    public String getName()
+    {
+        return name;
+    }
+    
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+    
+    public String getId()
+    {
+        return id;
+    }
+    
+    public void setId(String id)
+    {
+        this.id = id;
+    }    
+    
+    
+    public ArrayList<Object> getObjects()
+    {
+        return objects;
+    }    
+    
+    public void setObjects(ArrayList<Object> objects)
+    {
+        this.objects = objects;
+    }        
+    
+    public void addObject(Object object)
+    {
+        this.objects.add(object);
+    }
+    
+    public void addAllObjects(ArrayList<Object> objects)
+    {
+        this.objects.addAll(objects);
+    }
+    
+           
 }
