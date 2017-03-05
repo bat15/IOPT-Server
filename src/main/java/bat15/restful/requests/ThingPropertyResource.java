@@ -5,6 +5,7 @@
  */
 package bat15.restful.requests;
 
+import bat15.iot.entities.Snapshot;
 import bat15.restful.process.ThingPropertyProcessor;
 import java.io.BufferedReader;
 import java.io.File;
@@ -207,12 +208,14 @@ public class ThingPropertyResource {
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public void putJson(JsonObject snapshot) {
+    public void putJson(JsonObject snapshotJson) {
         
         
         
         
-        JsonArray models = snapshot.getJsonArray("Models");
+        JsonArray models = snapshotJson.getJsonArray("Models");
+        
+        Snapshot snapshot = new Snapshot();
         
         for(JsonValue model: models)
         {

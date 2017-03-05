@@ -26,5 +26,46 @@ public class Object {
     String name;
     
     @XmlElement(name="Id")
-    String id; 
+    String id;
+    
+    public String getName()
+    {
+        return name;
+    }
+    
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+    
+    public String getId()
+    {
+        return id;
+    }
+    
+    public void setId(String id)
+    {
+        this.id = id;
+    }    
+    
+    public ArrayList<Property> getProperties()
+    {
+        return properties;
+    }    
+    
+    public void setObjects(ArrayList<Property> properties)
+    {
+        this.properties = properties;
+    }        
+    
+    public void addObject(Property property)
+    {
+        this.properties.add(property);
+    }
+    
+    public void addAllObjects(ArrayList<Property> properties)
+    {
+        this.properties.addAll(properties);
+    }
+        
 }

@@ -24,8 +24,17 @@ public class Dashboard {
     @XmlElement(name="Parent")
     Object parent;
 
-    @XmlElement(name="Views")
-    Object views;
+    @XmlElement(name="Mappings")
+    PropertyMap mappings;
 
-    
+    public class PropertyMap
+    {
+        public Property property;
+        
+        public boolean isControl;
+        
+        public int min;
+        
+        public int max;
+    }
 }

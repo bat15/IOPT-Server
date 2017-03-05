@@ -23,14 +23,79 @@ public class Property {
     ArrayList<Script> scripts;    
     
     @XmlElement(name="Name")
-    String name;
-
-    @XmlElement(name="Type")
-    String type;        
+    String name;  
     
     @XmlElement(name="Id")
-    String id;    
+    String id; 
+    
+    @XmlElement(name="Type")
+    String type;          
 
     @XmlElement(name="Value")
-    String value;        
+    String value;   
+    
+    
+    public String getName()
+    {
+        return name;
+    }
+    
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+    
+    public String getId()
+    {
+        return id;
+    }
+    
+    public void setId(String id)
+    {
+        this.id = id;
+    }   
+    
+    public String getType()
+    {
+        return type;
+    }
+    
+    public void setType(String type)
+    {
+        this.type = type;
+    }
+
+
+    public String getValue()
+    {
+        return value;
+    }
+    
+    public void setValue(String value)
+    {
+        this.value = value;
+    }    
+    
+    
+    public ArrayList<Script> getProperties()
+    {
+        return scripts;
+    }    
+    
+    public void setObjects(ArrayList<Script> scripts)
+    {
+        this.scripts = scripts;
+    }        
+    
+    public void addObject(Script script)
+    {
+        this.scripts.add(script);
+    }
+    
+    public void addAllObjects(ArrayList<Script> scripts)
+    {
+        this.scripts.addAll(scripts);
+    }
+            
+    
 }
