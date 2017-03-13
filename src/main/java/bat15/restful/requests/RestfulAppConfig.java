@@ -9,13 +9,13 @@ import java.util.Set;
 import javax.ws.rs.core.Application;
 
 
-//bat15.restful.requests.ApplicationConfig
+//bat15.restful.requests.RestfulAppConfig
 /**
  *
  * @author Павел
  */
-@javax.ws.rs.ApplicationPath("/models")
-public class ApplicationConfig extends Application {
+@javax.ws.rs.ApplicationPath("service")
+public class RestfulAppConfig extends Application {
 
     @Override
     public Set<Class<?>> getClasses() {
@@ -31,7 +31,10 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(bat15.restful.requests.ThingPropertyResource.class);
+        resources.add(bat15.restful.requests.AuthResource.class);
+        resources.add(bat15.restful.requests.ModelResource.class);
+        resources.add(bat15.restful.requests.SyncResource.class);
+        resources.add(bat15.restful.requests.TestResource.class);
         resources.add(com.fasterxml.jackson.jaxrs.base.JsonMappingExceptionMapper.class);
         resources.add(com.fasterxml.jackson.jaxrs.base.JsonParseExceptionMapper.class);
         resources.add(com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider.class);

@@ -19,14 +19,70 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name="Object")
 public class Object {
 
-    @XmlElement(name="Properties")
-    ArrayList<Property> properties;
     
-    @XmlElement(name="Name")
+    public Object(String id, String modelId, String name, String pathUnit){
+        
+        this.name = name;
+        this.id = id;
+        this.pathUnit = pathUnit;
+        this.modelId = modelId;
+        
+        properties = new ArrayList();
+    }
+    
+    
+    @XmlElement(name="name")
     String name;
     
-    @XmlElement(name="Id")
+    @XmlElement(name="id")
     String id;
+    
+    @XmlElement(name="pathUnit")
+    String pathUnit;   
+    
+    @XmlElement(name="modelId")
+    String modelId;  
+    
+    
+    
+    @XmlElement(name="properties")
+    ArrayList<Property> properties;   
+    
+    @Override
+    public String toString()
+    {
+        String result = "{";
+        
+        result += "\"id\":\"" + id + "\",";
+        
+        result += "\"modelId\":\"" + modelId + "\",";
+        
+        result += "\"pathUnit\":\"" + pathUnit + "\",";
+        
+        result += "\"properties\":\"";
+        if(!properties.isEmpty())
+        {
+            result += "[";
+            int i = 0;
+            for(Property property:properties)
+            {
+                
+                if(i < properties.size() - 1) result += property.toString() + ",";
+                else result += property.toString();
+                
+                i++;
+            }
+            result += "]";
+        }
+        
+        result += "\"name\":\"" + name + "\" ";
+        
+        result += "}";
+        
+        return result;
+    }
+    
+    
     
     public String getName()
     {
@@ -48,6 +104,35 @@ public class Object {
         this.id = id;
     }    
     
+    
+ 
+    
+    public String getPathUnit()
+    {
+        return pathUnit;
+    }
+    
+    public void setPathUnit(String pathUnit)
+    {
+        this.pathUnit = pathUnit;
+    }
+    
+    
+
+    
+    public String getModelId()
+    {
+        return modelId;
+    }
+    
+    public void setModelId(String modelId)
+    {
+        this.modelId = modelId;
+    }       
+    
+    
+    
+    
     public ArrayList<Property> getProperties()
     {
         return properties;
@@ -67,5 +152,9 @@ public class Object {
     {
         this.properties.addAll(properties);
     }
+    
+    
+    
+    
         
 }

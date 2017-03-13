@@ -16,24 +16,84 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Павел
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name="Property")
+@XmlRootElement(name="property")
 public class Property {
     
-    @XmlElement(name="Scripts")
-    ArrayList<Script> scripts;    
+    public Property(String id, String objectId,  String name, String pathUnit, String value, String type){
+        
+        this.name = name;
+        this.id = id;
+        this.pathUnit = pathUnit;
+        this.value = value;
+        this.type = type;
+        
+        this.objectId = objectId;
+        
+        scripts = new ArrayList();
+    } 
     
-    @XmlElement(name="Name")
+    
+    @Override
+    public String toString()
+    {
+        String result = "{";
+        
+        result += "\"id\":\"" + id + "\",";
+        
+        result += "\"objectId\":\"" + objectId + "\",";
+        
+        result += "\"value\":\"" + value + "\",";
+        
+        result += "\"type\":\"" + type + "\",";
+        
+        result += "\"pathUnit\":\"" + pathUnit + "\",";
+        
+        result += "\"scripts\":\"";
+        if(!scripts.isEmpty())
+        {
+            result += "[";
+            int i = 0;
+            for(Script script:scripts)
+            {
+                
+                if(i < scripts.size() - 1) result += script.toString() + ",";
+                else result += script.toString();
+                
+                i++;
+            }
+            result += "]";
+        }
+        
+        result += "\"name\":\"" + name + "\" ";
+        
+        result += "}";
+        
+        return result;
+    }
+    
+    
+    @XmlElement(name="name")
     String name;  
     
-    @XmlElement(name="Id")
+    @XmlElement(name="id")
     String id; 
     
-    @XmlElement(name="Type")
+    @XmlElement(name="type")
     String type;          
 
-    @XmlElement(name="Value")
+    @XmlElement(name="value")
     String value;   
+ 
+    @XmlElement(name="pathUnit")
+    String pathUnit;  
     
+    
+    @XmlElement(name="objectId")
+    String objectId;   
+    
+    
+    @XmlElement(name="scripts")
+    ArrayList<Script> scripts;      
     
     public String getName()
     {
@@ -53,7 +113,40 @@ public class Property {
     public void setId(String id)
     {
         this.id = id;
-    }   
+    } 
+    
+
+
+
+     
+    
+    public String getPathUnit()
+    {
+        return pathUnit;
+    }
+    
+    public void setPathUnit(String pathUnit)
+    {
+        this.pathUnit = pathUnit;
+    }
+    
+    
+  
+    
+    public String getObjectId()
+    {
+        return objectId;
+    }
+    
+    public void setObjectId(String objectId)
+    {
+        this.objectId = objectId;
+    }       
+    
+    
+    
+    
+    
     
     public String getType()
     {

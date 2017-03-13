@@ -23,8 +23,6 @@
 
 <%
     String testModelJson= new String(request.getParameter("test_model").getBytes("ISO-8859-1"), "UTF-8");
-    
-    
 %>
 <html>
 <body>

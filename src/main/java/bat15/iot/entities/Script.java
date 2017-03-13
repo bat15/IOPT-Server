@@ -16,18 +16,56 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Павел
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name="Script")
+@XmlRootElement(name="script")
 public class Script {
+  
+    public Script(String id, String propertyId, String name, String pathUnit, String value){
+        
+        this.name = name;
+        this.id = id;
+        this.pathUnit = pathUnit;
+        this.value = value;
+        
+        this.propertyId = propertyId;
+
+    }     
     
-    @XmlElement(name="Name")
+    
+    @XmlElement(name="name")
     String name;
     
-    @XmlElement(name="Id")
+    @XmlElement(name="id")
     String id; 
 
-    @XmlElement(name="Value")
-    String value;  
+    @XmlElement(name="value")
+    String value;
     
+    @XmlElement(name="pathUnit")
+    String pathUnit;  
+    
+    @XmlElement(name="propertyId")
+    String propertyId;  
+    
+    @Override
+    public String toString()
+    {
+        String result = "{";
+        
+        result += "\"id\":\"" + id + "\",";
+        
+        result += "\"propertyId\":\"" + propertyId + "\",";
+        
+        result += "\"value\":\"" + value + "\",";
+
+        
+        result += "\"pathUnit\":\"" + pathUnit + "\",";
+        
+        result += "\"name\":\"" + name + "\" ";
+        
+        result += "}";
+        
+        return result;
+    }
     
     public String getName()
     {
@@ -47,7 +85,35 @@ public class Script {
     public void setId(String id)
     {
         this.id = id;
+    }
+    
+    
+    
+    public String getPathUnit()
+    {
+        return pathUnit;
+    }
+    
+    public void setPathUnit(String pathUnit)
+    {
+        this.pathUnit = pathUnit;
+    }
+    
+    
+ 
+    
+    public String getPropertyId()
+    {
+        return propertyId;
+    }
+    
+    public void setPropertyId(String propertyId)
+    {
+        this.propertyId = propertyId;
     }    
+    
+    
+    
     
     public String getValue()
     {
@@ -57,5 +123,7 @@ public class Script {
     public void setValue(String value)
     {
         this.value = value;
-    }               
+    } 
+    
+    
 }

@@ -4,18 +4,33 @@
 <%@ page import="java.util.*, java.text.*" %>
 
 <%! 
-String getFormattedDate() 
-{ 
-    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss"); 
-    return sdf.format(new Date()); 
-} 
+    String pageName = "main";
 %>
 <html>
-  <head>
-      <title>Добро пожаловать, JSP!</title>
-  </head>
+    <head>
+        <jsp:include page="template/default/chunks/head.jsp" >
+            <jsp:param name="pageName" value="<%=pageName%>" />
+        </jsp:include>
+    </head>
   <body>
-       <h1>Добро пожаловать!</h1>
-       <i>Сегодня <%= getFormattedDate() %></i>
+      
+    
+    <jsp:include page="template/default/chunks/header.jsp" >
+        <jsp:param name="pageName" value="<%=pageName%>" />
+    </jsp:include>
+      <br />
+
+    <jsp:include page="template/default/chunks/sign-in-form.jsp" >
+        <jsp:param name="pageName" value="<%=pageName%>" />
+    </jsp:include>      
+
+    <br /><br /><br />
+    <jsp:include page="template/default/chunks/sign-up-form.jsp" >
+        <jsp:param name="pageName" value="<%=pageName%>" />
+    </jsp:include>
+
+
+      
+
   </body>
 </html>

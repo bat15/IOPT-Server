@@ -20,14 +20,35 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name="Model")
 public class Model {
     
-    @XmlElement(name="Objects")
-    ArrayList<Object> objects;    
     
-    @XmlElement(name="Name")
+    public Model(String id, String userId, String name, String pathUnit){
+        
+        this.name = name;
+        this.id = id;
+        this.userId = userId;
+        this.pathUnit = pathUnit;
+        
+        
+        objects = new ArrayList();
+    }
+    
+    
+    @XmlElement(name="name")
     String name;
     
-    @XmlElement(name="Id")
+    @XmlElement(name="id")
     String id;
+    
+    @XmlElement(name="userId")
+    String userId;
+    
+    @XmlElement(name="pathUnit")
+    String pathUnit;
+    
+    
+    @XmlElement(name="objects")
+    ArrayList<Object> objects;  
+
     
     
     public String getName()
@@ -48,7 +69,30 @@ public class Model {
     public void setId(String id)
     {
         this.id = id;
-    }    
+    }
+    
+    public String geUsertId()
+    {
+        return userId;
+    }
+    
+    public void setUserId(String id)
+    {
+        this.userId = userId;
+    } 
+    
+    
+    public String getPathUnit()
+    {
+        return pathUnit;
+    }
+    
+    public void setPathUnit(String pathUnit)
+    {
+        this.pathUnit = pathUnit;
+    }
+    
+
     
     
     public ArrayList<Object> getObjects()
@@ -69,6 +113,40 @@ public class Model {
     public void addAllObjects(ArrayList<Object> objects)
     {
         this.objects.addAll(objects);
+    }
+    
+    
+    @Override
+    public String toString()
+    {
+        String result = "{";
+        
+        result += "\"id\":\"" + id + "\",";
+        
+        result += "\"pathUnit\":\"" + pathUnit + "\",";
+        
+        
+        result += "\"objects\":\"";
+        if(!objects.isEmpty())
+        {
+            result += "[";
+            int i = 0;
+            for(bat15.iot.entities.Object object:objects)
+            {
+                
+                if(i < objects.size() - 1) result += object.toString() + ",";
+                else result += object.toString();
+                
+                i++;
+            }
+            result += "],";
+        }
+        
+        result += "\"name\":\"" + name + "\" ";
+        
+        result += "}";
+        
+        return result;
     }
     
            
