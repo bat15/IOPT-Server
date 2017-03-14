@@ -6,6 +6,7 @@
 package bat15.iot.entities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -29,7 +30,17 @@ public class Object {
         
         properties = new ArrayList();
     }
-    
+
+    public Object(HashMap<String, String> fields){
+        
+        this.name = fields.get("name");
+        this.id = fields.get("id");
+        this.modelId = fields.get("id_model");
+        this.pathUnit = fields.get("path_unit");
+        
+        
+        properties = new ArrayList();
+    }
     
     @XmlElement(name="name")
     String name;
@@ -48,8 +59,8 @@ public class Object {
     @XmlElement(name="properties")
     ArrayList<Property> properties;   
     
-    @Override
-    public String toString()
+
+    public String toJsonString()
     {
         String result = "{";
         
@@ -60,9 +71,10 @@ public class Object {
         result += "\"pathUnit\":\"" + pathUnit + "\",";
         
         result += "\"properties\":\"";
-        if(!properties.isEmpty())
+        result += "[";
+        if(properties != null && !properties.isEmpty())
         {
-            result += "[";
+            
             int i = 0;
             for(Property property:properties)
             {
@@ -72,8 +84,9 @@ public class Object {
                 
                 i++;
             }
-            result += "]";
+            
         }
+        result += "]";
         
         result += "\"name\":\"" + name + "\" ";
         
@@ -138,7 +151,7 @@ public class Object {
         return properties;
     }    
     
-    public void setPropertiess(ArrayList<Property> properties)
+    public void setProperties(ArrayList<Property> properties)
     {
         this.properties = properties;
     }        

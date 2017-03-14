@@ -6,6 +6,7 @@
 package bat15.iot.entities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -27,6 +28,18 @@ public class Model {
         this.id = id;
         this.userId = userId;
         this.pathUnit = pathUnit;
+        
+        
+        objects = new ArrayList();
+    }
+    
+    
+    public Model(HashMap<String, String> fields){
+        
+        this.name = fields.get("name");
+        this.id = fields.get("id");
+        this.userId = fields.get("id_user");
+        this.pathUnit = fields.get("path_unit");
         
         
         objects = new ArrayList();
@@ -116,8 +129,7 @@ public class Model {
     }
     
     
-    @Override
-    public String toString()
+    public String toJsonString()
     {
         String result = "{";
         
@@ -127,9 +139,10 @@ public class Model {
         
         
         result += "\"objects\":\"";
-        if(!objects.isEmpty())
+        result += "[";
+        if(objects != null && !objects.isEmpty())
         {
-            result += "[";
+            
             int i = 0;
             for(bat15.iot.entities.Object object:objects)
             {
@@ -139,8 +152,9 @@ public class Model {
                 
                 i++;
             }
-            result += "],";
+            
         }
+        result += "],";
         
         result += "\"name\":\"" + name + "\" ";
         

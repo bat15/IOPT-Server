@@ -6,6 +6,7 @@
 package bat15.iot.entities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -24,17 +25,31 @@ public class Property {
         this.name = name;
         this.id = id;
         this.pathUnit = pathUnit;
-        this.value = value;
-        this.type = type;
         
+        this.value = value;
+        this.type = type;       
         this.objectId = objectId;
         
         scripts = new ArrayList();
     } 
     
+    public Property(HashMap<String, String> fields){
+        
+        this.name = fields.get("name");
+        this.id = fields.get("id");
+        this.objectId = fields.get("id_object");
+        
+        this.pathUnit = fields.get("path_unit");    
+        this.value = fields.get("value");
+        this.type = fields.get("type");
+        
+        
+        scripts = new ArrayList();
+    }
     
-    @Override
-    public String toString()
+    
+
+    public String toJsonString()
     {
         String result = "{";
         
@@ -48,10 +63,11 @@ public class Property {
         
         result += "\"pathUnit\":\"" + pathUnit + "\",";
         
+        
         result += "\"scripts\":\"";
-        if(!scripts.isEmpty())
+        result += "[";
+        if(scripts != null && !scripts.isEmpty())
         {
-            result += "[";
             int i = 0;
             for(Script script:scripts)
             {
@@ -61,8 +77,9 @@ public class Property {
                 
                 i++;
             }
-            result += "]";
         }
+        result += "]";
+        
         
         result += "\"name\":\"" + name + "\" ";
         

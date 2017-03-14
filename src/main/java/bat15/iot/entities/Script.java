@@ -6,6 +6,7 @@
 package bat15.iot.entities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -30,6 +31,18 @@ public class Script {
 
     }     
     
+    public Script(HashMap<String, String> fields){
+        
+        this.name = fields.get("name");
+        this.id = fields.get("id");
+        this.propertyId = fields.get("id_property");
+        
+        this.pathUnit = fields.get("path_unit");    
+        this.value = fields.get("value");
+        
+    }
+    
+    
     
     @XmlElement(name="name")
     String name;
@@ -46,8 +59,8 @@ public class Script {
     @XmlElement(name="propertyId")
     String propertyId;  
     
-    @Override
-    public String toString()
+
+    public String toJsonString()
     {
         String result = "{";
         

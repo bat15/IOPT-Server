@@ -21,6 +21,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name="snapshot")
 public class Snapshot {
     
+    public Snapshot()
+    {
+        this.id = null;
+        models = new ArrayList();
+        dashboards = new ArrayList();
+        
+        lastUpdate = (new Date()).toString();
+    }
+    
     
     public Snapshot(String id)
     {
@@ -30,6 +39,8 @@ public class Snapshot {
         
         lastUpdate = (new Date()).toString();
     }
+    
+
     
     
     @XmlElement(name="models")
@@ -45,22 +56,19 @@ public class Snapshot {
     protected String id;
     
     
-    @Override
-    public String toString()
+
+    public String toJsonString()
     {
         String result = "{";
         
-        result += "\"id\":\"" + id + "\",";
-        
-        
-        
-        
-        
+        if(id != null && !id.isEmpty()) result += "\"id\":\"" + id + "\",";
+        else result += "\"id\":\"null\",";
         
         result += "\"models\":\"";
-        if(!models.isEmpty())
+        result += "[";
+        if(models != null && !models.isEmpty())
         {
-            result += "[";
+            
             int i = 0;
             for(Model model:models)
             {
@@ -70,13 +78,15 @@ public class Snapshot {
                 
                 i++;
             }
-            result += "],";
+            
         }
+        result += "],";
         
         result += "\"dashboards\":\"";
+        result += "[";
         if(!dashboards.isEmpty())
         {
-            result += "[";
+            
             int i = 0;
             for(Dashboard dashboard:dashboards)
             {
@@ -87,8 +97,9 @@ public class Snapshot {
                 
                 i++;
             }
-            result += "],";
+            
         } 
+        result += "],";
         
         result += "\"lastUpdate\":\"" + lastUpdate + "\"";
         
