@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package bat15.iot.rest.process;
+package bat15.iot.rest.processors;
 
 
 import bat15.iot.store.JDBCConnection;

@@ -7,8 +7,8 @@ package bat15.iot.rest.resources;
 
 import bat15.iot.entities.Snapshot;
 import bat15.iot.rest.interfaces.PATCH;
-import bat15.iot.rest.process.ProcessorAuth;
-import bat15.iot.rest.process.ProcessorGUIClient;
+import bat15.iot.rest.processors.ProcessorAuth;
+import bat15.iot.rest.processors.ProcessorGUIClient;
 import bat15.security.Security;
 import java.io.BufferedReader;
 import java.io.File;
