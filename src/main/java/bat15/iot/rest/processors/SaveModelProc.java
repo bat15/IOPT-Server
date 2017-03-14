@@ -6,11 +6,12 @@
 package bat15.iot.rest.processors;
 
 
-import bat15.iot.store.JDBCConnection;
+import bat15.server.Settings;
+import bat15.server.JDBCConnection;
 import bat15.iot.entities.Model;
 import bat15.iot.entities.Property;
 import bat15.iot.entities.Script;
-import bat15.security.Security;
+import bat15.server.Security;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -49,7 +50,7 @@ import java.security.MessageDigest;
  */
 @Stateless
 @LocalBean
-public class ProcessorLoadModel {
+public class SaveModelProc {
     
     @Resource(lookup = "IOPT-Server")
     private Properties settings;
@@ -205,7 +206,6 @@ public class ProcessorLoadModel {
 
     }
     
-    
     public Long insertObjectInDB(bat15.iot.entities.Object object, String modelId)
     {
       
@@ -328,215 +328,171 @@ public class ProcessorLoadModel {
     
     
     
-  
-    
-    public ArrayList<Model> getModelsFromDB(String userId)
-    {
+    public String getModel(String modelQuery){
         
+        String testData = "FAIL";
+        String jsonData = "NONE";
+         
+        if(modelQuery == null) {
+            testData = "[{error: null}]";
+            return testData;
+        }
+        else if(modelQuery.isEmpty()) {
+            testData = "[{error : no_model_name_defined}]";
+            return testData;
+        }
+        
+        String model = "";
+        String object = "";
+        String property = "";
+        String script = "";
+        
+        ArrayList<String> paths = new ArrayList();
+        
+        System.out.println("modelQuery: " + modelQuery);
+        
+        paths.addAll(Arrays.asList(modelQuery.split("/")));
+        
+        
+        
+        
+        switch (paths.size()) {
+            case 0://error - no model_name defined
+                testData = "[{error : no_model_name_defined}]";
+                System.out.println("case 0 size: " + paths.size());
+                System.out.println("!!! " + testData);
+                
+                break;
+            case 1://model_name
+                System.out.println("case 1 size: " + paths.size());
+                try{
+                    model = paths.get(0);
+                    testData = "[{model: " + model + "}]";
+                    
+                }catch(Exception ex){
+                    System.out.println("!!! " + testData);
+                }
+                
+                
+                
+                break;
+            case 2://object_name
+                System.out.println("case 2 size: " + paths.size());
+                
+                try{
+                    model = paths.get(0);
+                    object = paths.get(1);
+                    testData = "[{model: " + model + "}, {object:" + object + "}]";
+                    System.out.println("!!! " + testData);
+                }catch(Exception ex){}
+                
+                
+                
+                break;
+            case 3://property_name
+                try{
+                    String tmpStr = (new Date()).toString() + (new Random()).nextInt(1000);
+                    
+
+                    model = paths.get(0);
+                    object = paths.get(1);
+                    property = paths.get(2);                    
+                    
+                    tmpStr = "random" + (tmpStr.hashCode() + "").replace("-", "");   
+                    
+                    
+                    testData = "[{model: " + model + "}, {object:" + object + "}, {property: { name:" + property+ ", value:" + tmpStr + "}}]";
+                    System.out.println("!!! " + testData);
+                }catch(Exception ex){}
+                
+               
+                
+                String propValue = getProperty(property);
+                
+                if(propValue != null) {
+                    System.out.println("propValue: " + propValue);
+                    
+                    jsonData = "{ \"id\": \"" + property + "\", \"value\":\"" + propValue + "\" }";
+                }
+                else jsonData = "null";
+                
+                
+                    
+                break;
+                
+            case 4://script_name
+                try{
+                    
+                    model = paths.get(0);
+                    object = paths.get(1);
+                    property = paths.get(2);
+                    script = paths.get(3);                    
+                    testData = "[{model: " + model + "}, {object:" + object + "}, {property:" + property + "}, {script: { name:" + script + ", value: js_code}}]";
+                    System.out.println("!!! " + testData);
+                }catch(Exception ex){}
+                
+
+                
+                break;      
+            default://error - to much arguments
+                testData = "[{error : to_much_arguments}]";
+                System.out.println("!!! " + testData);
+                break;
+        }
+            
+        String response;
+        
+                
+        return  jsonData;
+    }
+    
+    
+    
+    public ArrayList<Model> delsertModelsFromShanpshot(String body, String userId)
+    {
         JsonParser parser = new JsonParser();
         
+        JsonArray jsonModels = parser.parse(body).getAsJsonObject().getAsJsonArray("models");
+        
         ArrayList<Model> models = new ArrayList();
-          
+//        ArrayList<bat15.iot.entities.Object> objects = new ArrayList();
+//        ArrayList<Property> properties = new ArrayList();
+//        ArrayList<Script> scripts = new ArrayList();
         
-        ArrayList<String> tables = new ArrayList();
-        tables.add(Settings.MODELS_TABLE_NAME);
-
-        ArrayList<String> whereConditions = new ArrayList();
-        whereConditions.add("\"id_user\"=" + userId + "");       
         
-        ArrayList<String> modelIds = connection.selectList(tables, "\"id\"", whereConditions);
-
         
-        ArrayList<String> selectKeys = new ArrayList();
-        selectKeys.add("\"id\"");
-        selectKeys.add("\"id_user\"");
-        selectKeys.add("\"name\"");
-        selectKeys.add("\"path_unit\"");
-        
- 
-        
-        for(String id:modelIds){
+        for(JsonElement model:jsonModels)
+        {
             
-            System.out.println("id: " + id);
-            
-            whereConditions = new ArrayList();
-            whereConditions.add("\"id\"=" + id);
-            
-            HashMap<String, String> modelFields = connection.selectHash(tables, selectKeys, whereConditions);
-
-            Model newModel = null;
-
-            if(modelFields.size() != 4) {
-                System.out.println("not enough arguments!");
-                return null;
-            }
-            else{
-                newModel = new Model(modelFields);
-            } 
+            Model newModel = constructModelsFromJson(model.getAsJsonObject(), userId);
             
             
-            newModel.setObjects(getObjectsFromDB(id));
-
-            models.add(newModel);
+            //insertModelInDB(newModel);
+            if(newModel != null) models.add(newModel);
         }
         
         
-
+        for(Model model:models){
+            
+            Long modelId = insertModelInDB(model);
+            
+            for(bat15.iot.entities.Object object:model.getObjects()){
+                
+                Long objectId = insertObjectInDB(object, modelId.toString());
+                
+                for(Property property:object.getProperties()){
+                    
+                    Long propertyId = insertPropertyInDB(property, objectId.toString());
+                    
+                    for(Script script:property.getScripts()){
+                        Long scriptId = insertScriptInDB(script, propertyId.toString());
+                    }
+                }      
+            }
+        }
+        
         
         return models;
-    }
-    
-    
-    public ArrayList<bat15.iot.entities.Object> getObjectsFromDB(String modelId)
-    {
-        ArrayList<bat15.iot.entities.Object> objects = new ArrayList();
-        
-        ArrayList<String> tables = new ArrayList();
-        tables.add(Settings.OBJECTS_TABLE_NAME);
-
-        ArrayList<String> whereConditions = new ArrayList();
-        whereConditions.add("\"id_model\"=" + modelId + "");       
-        
-        ArrayList<String> objectIds = connection.selectList(tables, "\"id\"", whereConditions);
-
-        
-        ArrayList<String> selectKeys = new ArrayList();
-        selectKeys.add("\"id\"");
-        selectKeys.add("\"id_model\"");
-        selectKeys.add("\"name\"");
-        selectKeys.add("\"path_unit\"");
-        
- 
-        
-        for(String id:objectIds){
-            
-            System.out.println("id: " + id);
-
-            whereConditions = new ArrayList();
-            whereConditions.add("\"id\"=" + id);
-        
-            HashMap<String, String> objectFields = connection.selectHash(tables, selectKeys, whereConditions);
-
-            bat15.iot.entities.Object newObject = null;
-
-            if(objectFields.size() != 4) {
-                System.out.println("not enough arguments!");
-                return null;
-            }
-            else{
-                newObject = new bat15.iot.entities.Object(objectFields);
-            } 
-            
-
-            
-            newObject.setProperties(getPropertiesFromDB(id));
-
-            objects.add(newObject);
-        }
-            
-        return objects;
-    }
-    
-    
-    public ArrayList<Property> getPropertiesFromDB(String objectId)
-    {
-        ArrayList<Property> properties = new ArrayList();
-        
-        ArrayList<String> tables = new ArrayList();
-        tables.add(Settings.PROPERTIES_TABLE_NAME);
-        
-
-        ArrayList<String> whereConditions = new ArrayList();
-        whereConditions.add("\"id_object\"=" + objectId + "");       
-        
-        ArrayList<String> propertyIds = connection.selectList(tables, "\"id\"", whereConditions);
-
-        
-        ArrayList<String> selectKeys = new ArrayList();
-        selectKeys.add("\"id\"");
-        selectKeys.add("\"id_object\"");
-        selectKeys.add("\"name\"");
-        selectKeys.add("\"path_unit\"");
-        
- 
-        
-        for(String id:propertyIds){
-            
-            System.out.println("id: " + id);
-
-            whereConditions = new ArrayList();
-            whereConditions.add("\"id\"=" + id);
-        
-            HashMap<String, String> propertyFields = connection.selectHash(tables, selectKeys, whereConditions);
-
-            Property newProperty = null;
-
-            if(propertyFields.size() != 4) {
-                System.out.println("not enough arguments!");
-                return null;
-            }
-            else{
-                newProperty = new Property(propertyFields);
-            } 
-            
-
-            
-            newProperty.setScripts(getScriptsFromDB(id));
-
-            properties.add(newProperty);
-        }
-            
-        return properties;
-    }
-    
-    
-    
-    public ArrayList<Script> getScriptsFromDB(String propertyId)
-    {
-        ArrayList<Script> scripts = new ArrayList();
-        
-        ArrayList<String> tables = new ArrayList();
-        tables.add(Settings.SCRIPTS_TABLE_NAME);
-        
-
-        ArrayList<String> whereConditions = new ArrayList();
-        whereConditions.add("\"id_property\"=" + propertyId + "");       
-        
-        ArrayList<String> scriptIds = connection.selectList(tables, "\"id\"", whereConditions);
-
-        
-        ArrayList<String> selectKeys = new ArrayList();
-        selectKeys.add("\"id\"");
-        selectKeys.add("\"id_object\"");
-        selectKeys.add("\"name\"");
-        selectKeys.add("\"path_unit\"");
-        
- 
-        
-        for(String id:scriptIds){
-            
-            System.out.println("id: " + id);
-
-            whereConditions = new ArrayList();
-            whereConditions.add("\"id\"=" + id);
-        
-            HashMap<String, String> scriptFields = connection.selectHash(tables, selectKeys, whereConditions);
-
-            Script newScript = null;
-
-            if(scriptFields.size() != 4) {
-                System.out.println("not enough arguments!");
-                return null;
-            }
-            else{
-                newScript = new Script(scriptFields);
-            } 
-            
-
-            scripts.add(newScript);
-        }
-            
-        return scripts;
     }
     
     

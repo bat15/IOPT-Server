@@ -7,8 +7,8 @@ package bat15.iot.rest.resources;
 
 import bat15.iot.entities.Snapshot;
 import bat15.iot.rest.interfaces.PATCH;
-import bat15.iot.rest.processors.ProcessorAuth;
-import bat15.iot.rest.processors.ProcessorGUIClient;
+import bat15.iot.rest.processors.AuthProc;
+import bat15.iot.rest.processors.ModelsProc;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -67,11 +67,11 @@ public class TestResource {
 //    @EJB (beanName="Result")
 //    Result proc;
 
-    @EJB (beanName="ProcessorGUIClient")
-    ProcessorGUIClient GUIProc;  
+    @EJB (beanName="ModelsProc")
+    ModelsProc modelsProcessor;  
     
-    @EJB (beanName="ProcessorAuth")
-    ProcessorAuth authProc;    
+    @EJB (beanName="AuthProc")
+    AuthProc authProcessor;    
     
     /**
      * Creates a new instance of Rest Resource
@@ -283,7 +283,7 @@ public class TestResource {
             @PathParam("path") String modelQuery) {
     
         //ui.getBaseUri();
-        return GUIProc.getModel(modelQuery, "get", null, false);
+        return modelsProcessor.getModel(modelQuery, "get", null, false);
     }
     
     
@@ -307,7 +307,7 @@ public class TestResource {
         
         
         //ui.getBaseUri();
-        return authProc.getCookieByLogin(login, ip) + "\n\r";
+        return authProcessor.getCookieByLogin(login, ip) + "\n\r";
         
     }
 
@@ -323,7 +323,7 @@ public class TestResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public void putModelFromJson(String snapshotJson) {
         
-//        JsonArray models = (JsonArray) snapshotJson.getJsonObject("Models");
+//        JsonArray models = (JsonArray) snapshotJson.getJsonObject("ModelsProc");
         
 
     }
@@ -415,7 +415,7 @@ public class TestResource {
         
 //        if(cookieValue == null) cookieValue =  "a35a8c35af4cfdd7deca843d118b";
         
-        if(authProc.authByHash(cookieValue, false)) return Response.status(Response.Status.OK).entity("AUTH_OK\n\r").build();
+        if(authProcessor.authByHash(cookieValue, false)) return Response.status(Response.Status.OK).entity("AUTH_OK\n\r").build();
         else return Response.status(Response.Status.FORBIDDEN).entity("AUTH_FAIL\n\r").build();
     }
     
@@ -464,7 +464,7 @@ public class TestResource {
         
 
         
-        if(authProc.authByHash(appKey, true)) return Response.status(Response.Status.OK).entity("AUTH_OK\n\r").build();
+        if(authProcessor.authByHash(appKey, true)) return Response.status(Response.Status.OK).entity("AUTH_OK\n\r").build();
         else return Response.status(Response.Status.FORBIDDEN).entity("AUTH_FAIL\n\r").build();
     }    
     

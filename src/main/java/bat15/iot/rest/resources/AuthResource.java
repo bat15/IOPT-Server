@@ -7,9 +7,9 @@ package bat15.iot.rest.resources;
 
 import bat15.iot.entities.Snapshot;
 import bat15.iot.rest.interfaces.PATCH;
-import bat15.iot.rest.processors.ProcessorAuth;
-import bat15.iot.rest.processors.ProcessorGUIClient;
-import bat15.security.Security;
+import bat15.iot.rest.processors.AuthProc;
+import bat15.iot.rest.processors.ModelsProc;
+import bat15.server.Security;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -103,11 +103,11 @@ public class AuthResource {
 //    @EJB (beanName="Result")
 //    Result proc;
 
-    @EJB (beanName="ProcessorGUIClient")
-    ProcessorGUIClient GUIProc;  
+    @EJB (beanName="ModelsProc")
+    ModelsProc modelsProcessor;  
     
-    @EJB (beanName="ProcessorAuth")
-    ProcessorAuth authProc;    
+    @EJB (beanName="AuthProc")
+    AuthProc authProcessor;    
     
     /**
      * Creates a new instance of Rest Resource
@@ -172,9 +172,9 @@ public class AuthResource {
             System.out.println("password: " + password);
             
             
-            if(authProc.authByPassword(login, password)){
+            if(authProcessor.authByPassword(login, password)){
                 
-                newCookieValue = authProc.upsertCookie(request.getSession().getId(), login, ipAddress);
+                newCookieValue = authProcessor.upsertCookie(request.getSession().getId(), login, ipAddress);
 
                 return Response.ok()
                     .cookie(new NewCookie("session", newCookieValue)).build();
@@ -256,14 +256,14 @@ public class AuthResource {
         
         
 
-        if(authProc.authByHash(cookieValue, false)) {
+        if(authProcessor.authByHash(cookieValue, false)) {
             
             
             
             String appKey = null;
 
             try{
-                appKey = authProc.getAppkey(idModel, cookieValue);
+                appKey = authProcessor.getAppkey(idModel, cookieValue);
             }catch(Exception ex){}
             
             if(appKey == null) return Response.status(Response.Status.NOT_FOUND).entity("NO_APPKEY\n\r").build();
@@ -315,7 +315,7 @@ public class AuthResource {
         
         
 
-        if(authProc.authByHash(cookieValue, false)) {
+        if(authProcessor.authByHash(cookieValue, false)) {
             
             String appKey = null;
             int i = 0;
@@ -332,7 +332,7 @@ public class AuthResource {
             if(appKey != null) appKey = appKey.replace("-", "");
 
             
-            authProc.generateAppkey(idModel, cookieValue, appKey);
+            authProcessor.generateAppkey(idModel, cookieValue, appKey);
             
             if(appKey == null) Response.status(Response.Status.SERVICE_UNAVAILABLE).entity("AUTH_FAIL\n\r").build();
             else return Response.status(Response.Status.OK).entity("{\"appkey\":\"" + appKey + "\"}\n\r").build();

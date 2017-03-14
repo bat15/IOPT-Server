@@ -8,10 +8,10 @@ package bat15.iot.rest.resources;
 import bat15.iot.entities.Model;
 import bat15.iot.entities.Snapshot;
 import bat15.iot.rest.interfaces.PATCH;
-import bat15.iot.rest.processors.ProcessorAuth;
-import bat15.iot.rest.processors.ProcessorGUIClient;
-import bat15.iot.rest.processors.ProcessorLoadModel;
-import bat15.iot.rest.processors.ProcessorSaveModel;
+import bat15.iot.rest.processors.AuthProc;
+import bat15.iot.rest.processors.ModelsProc;
+import bat15.iot.rest.processors.LoadModelProc;
+import bat15.iot.rest.processors.SaveModelProc;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
@@ -98,17 +98,17 @@ public class SyncResource {
 //    @EJB (beanName="Result")
 //    Result proc;
 
-    @EJB (beanName="ProcessorGUIClient")
-    ProcessorGUIClient GUIProc;  
+    @EJB (beanName="ModelsProc")
+    ModelsProc modelsProcessor;  
     
-    @EJB (beanName="ProcessorAuth")
-    ProcessorAuth authProc;   
+    @EJB (beanName="AuthProc")
+    AuthProc authProcessor;   
     
-    @EJB (beanName="ProcessorSaveModel")
-    ProcessorSaveModel saveModelProc;    
+    @EJB (beanName="SaveModelProc")
+    SaveModelProc saveModelProcessor;    
     
-    @EJB (beanName="ProcessorLoadModel")
-    ProcessorLoadModel loadModelProc;    
+    @EJB (beanName="LoadModelProc")
+    LoadModelProc loadModelProcessor;    
     
     /**
      * Creates a new instance of Rest Resource
@@ -185,16 +185,16 @@ public class SyncResource {
         
         if(hash==null || hash.isEmpty()){
             hash = headers.getHeaderString("Content-Sidkey");//appkey
-            userId = authProc.getUserIdByHash(hash, true);
+            userId = authProcessor.getUserIdByHash(hash, true);
         }
         else 
-            userId = authProc.getUserIdByHash(hash, false); //cookie
+            userId = authProcessor.getUserIdByHash(hash, false); //cookie
         
         if(userId == null) Response.status(Status.FORBIDDEN).build();
         
         System.out.println(body);
         
-        ArrayList<Model> models = saveModelProc.delsertModelsFromShanpshot(body, userId);
+        ArrayList<Model> models = saveModelProcessor.delsertModelsFromShanpshot(body, userId);
         
         System.out.println("models.size(): " + models.size());
         
@@ -246,15 +246,15 @@ public class SyncResource {
         
         if(hash==null || hash.isEmpty()){
             hash = headers.getHeaderString("Content-Sidkey");//appkey
-            userId = authProc.getUserIdByHash(hash, true);
+            userId = authProcessor.getUserIdByHash(hash, true);
         }
         else 
-            userId = authProc.getUserIdByHash(hash, false); //cookie
+            userId = authProcessor.getUserIdByHash(hash, false); //cookie
         
         if(userId == null) Response.status(Status.FORBIDDEN).build();
         
 
-        ArrayList<Model> models = loadModelProc.getModelsFromDB(userId);
+        ArrayList<Model> models = loadModelProcessor.getModelsFromDB(userId);
         
         Snapshot snapshot = new Snapshot();
         

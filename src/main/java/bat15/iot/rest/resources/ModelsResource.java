@@ -8,9 +8,9 @@ package bat15.iot.rest.resources;
 import bat15.iot.entities.Model;
 import bat15.iot.entities.Snapshot;
 import bat15.iot.rest.interfaces.PATCH;
-import bat15.iot.rest.processors.ProcessorAuth;
-import bat15.iot.rest.processors.ProcessorGUIClient;
-import bat15.iot.rest.processors.ProcessorSaveModel;
+import bat15.iot.rest.processors.AuthProc;
+import bat15.iot.rest.processors.ModelsProc;
+import bat15.iot.rest.processors.SaveModelProc;
 import com.google.gson.JsonParser;
 import java.io.BufferedReader;
 import java.io.File;
@@ -84,7 +84,7 @@ import javax.ws.rs.core.Response.Status;
  * @author Павел
  */
 @Path("/models")
-public class ModelResource {
+public class ModelsResource {
     
     @Resource(lookup = "IOPT-Server")
     private Properties properties;
@@ -97,18 +97,18 @@ public class ModelResource {
 //    @EJB (beanName="Result")
 //    Result proc;
 
-    @EJB (beanName="ProcessorGUIClient")
-    ProcessorGUIClient GUIProc;  
+    @EJB (beanName="ModelsProc")
+    ModelsProc modelsProcessor;  
     
-    @EJB (beanName="ProcessorAuth")
-    ProcessorAuth authProc;   
+    @EJB (beanName="AuthProc")
+    AuthProc authProcessor;   
     
-    @EJB (beanName="ProcessorSaveModel")
-    ProcessorSaveModel modelProc;    
+    @EJB (beanName="SaveModelProc")
+    SaveModelProc saveModelProcessor;    
     /**
      * Creates a new instance of Rest Resource
      */
-    public ModelResource() {
+    public ModelsResource() {
     }
     
     
@@ -175,10 +175,10 @@ public class ModelResource {
 
             if(hash==null || hash.isEmpty()){
                 hash = headers.getHeaderString("Content-Sidkey");//appkey
-                userId = authProc.getUserIdByHash(hash, true);
+                userId = authProcessor.getUserIdByHash(hash, true);
             }
             else 
-                userId = authProc.getUserIdByHash(hash, false); //cookie
+                userId = authProcessor.getUserIdByHash(hash, false); //cookie
             
         }catch(Exception ex){}
         
@@ -192,7 +192,7 @@ public class ModelResource {
         }
         else System.out.println("GET Simple json");     
         
-        String procResultJson = GUIProc.getModel(path, userId, null, isMinimal);
+        String procResultJson = modelsProcessor.getModel(path, userId, null, isMinimal);
         JsonParser parser = new JsonParser();
         
         if(procResultJson == null || procResultJson.isEmpty()) return Response.status(Status.NOT_FOUND).build();
@@ -228,10 +228,10 @@ public class ModelResource {
         
         if(hash==null || hash.isEmpty()){
             hash = headers.getHeaderString("Content-Sidkey");//appkey
-            userId = authProc.getUserIdByHash(hash, true);
+            userId = authProcessor.getUserIdByHash(hash, true);
         }
         else 
-            userId = authProc.getUserIdByHash(hash, false); //cookie
+            userId = authProcessor.getUserIdByHash(hash, false); //cookie
         
         if(userId == null) return Response.status(Status.FORBIDDEN).build();
          
@@ -248,7 +248,7 @@ public class ModelResource {
             
         System.out.println("PUT newValue: " + newValue);
         
-        String resultStatus = GUIProc.getModel(path, userId, newValue, false);
+        String resultStatus = modelsProcessor.getModel(path, userId, newValue, false);
         
 
         
@@ -280,15 +280,15 @@ public class ModelResource {
         
         if(hash==null || hash.isEmpty()){
             hash = headers.getHeaderString("Content-Sidkey");//appkey
-            userId = authProc.getUserIdByHash(hash, true);
+            userId = authProcessor.getUserIdByHash(hash, true);
         }
         else 
-            userId = authProc.getUserIdByHash(hash, false); //cookie
+            userId = authProcessor.getUserIdByHash(hash, false); //cookie
         
         if(userId == null) Response.status(Status.FORBIDDEN).build();
         
         
-        ArrayList<Model> models = modelProc.delsertModelsFromShanpshot(body, userId);
+        ArrayList<Model> models = saveModelProcessor.delsertModelsFromShanpshot(body, userId);
         
         System.out.println("models.size(): " + models.size());
         

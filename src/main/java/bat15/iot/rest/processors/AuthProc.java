@@ -6,8 +6,9 @@
 package bat15.iot.rest.processors;
 
 
-import bat15.iot.store.JDBCConnection;
-import bat15.security.Security;
+import bat15.server.Settings;
+import bat15.server.JDBCConnection;
+import bat15.server.Security;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -45,7 +46,7 @@ import java.security.MessageDigest;
  */
 @Stateless
 @LocalBean
-public class ProcessorAuth {
+public class AuthProc {
     
     @Resource(lookup = "IOPT-Server")
     private Properties settings;
