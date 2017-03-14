@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package bat15.iot.rest.requests;
+package bat15.iot.rest.resources;
 
 import bat15.iot.entities.Snapshot;
 import bat15.iot.rest.interfaces.PATCH;

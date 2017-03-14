@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package bat15.iot.rest.requests;
+package bat15.iot.rest.resources;
 
 import java.util.Set;
 import javax.ws.rs.core.Application;
@@ -31,10 +31,10 @@ public class RestfulAppConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(bat15.iot.rest.requests.AuthResource.class);
-        resources.add(bat15.iot.rest.requests.ModelResource.class);
-        resources.add(bat15.iot.rest.requests.SyncResource.class);
-        resources.add(bat15.iot.rest.requests.TestResource.class);
+        resources.add(bat15.iot.rest.resources.AuthResource.class);
+        resources.add(bat15.iot.rest.resources.ModelResource.class);
+        resources.add(bat15.iot.rest.resources.SyncResource.class);
+        resources.add(bat15.iot.rest.resources.TestResource.class);
         resources.add(com.fasterxml.jackson.jaxrs.base.JsonMappingExceptionMapper.class);
         resources.add(com.fasterxml.jackson.jaxrs.base.JsonParseExceptionMapper.class);
         resources.add(com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider.class);
