@@ -5,6 +5,10 @@
  */
 package bat15.iot.entities;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -64,7 +68,7 @@ public class Property {
         result += "\"pathUnit\":\"" + pathUnit + "\",";
         
         
-        result += "\"scripts\":\"";
+        result += "\"scripts\":";
         result += "[";
         if(scripts != null && !scripts.isEmpty())
         {
@@ -72,13 +76,13 @@ public class Property {
             for(Script script:scripts)
             {
                 
-                if(i < scripts.size() - 1) result += script.toString() + ",";
-                else result += script.toString();
+                if(i < scripts.size() - 1) result += script.toJsonString() + ",";
+                else result += script.toJsonString();
                 
                 i++;
             }
         }
-        result += "]";
+        result += "],";
         
         
         result += "\"name\":\"" + name + "\" ";
@@ -207,5 +211,64 @@ public class Property {
         this.scripts.addAll(scripts);
     }
             
+    public static Property parseJsonPropertyOnly(String propertyBody)
+    {
+        JsonParser parser = new JsonParser();
+        JsonObject jsonProperty = parser.parse(propertyBody).getAsJsonObject();     
+        
+        String idStr = jsonProperty.get("id").getAsString();
+        String name = jsonProperty.get("name").getAsString();
+        String pathUnit = jsonProperty.get("pathUnit").getAsString();
+        String objectId = jsonProperty.get("objectId").getAsString();
+        String value = jsonProperty.get("value").getAsString();
+        String type = jsonProperty.get("type").getAsString();
+   
+        Property newProperty = new Property(idStr, objectId, name, pathUnit, value, type);
+
+        return newProperty;
+    }
+    
+    
+    public static Property parseJsonPropertyAndNested(String propertyBody)
+    {
+        JsonParser parser = new JsonParser();
+        JsonObject jsonProperty = parser.parse(propertyBody).getAsJsonObject();    
+        
+        String idStr = jsonProperty.get("id").getAsString();
+        String name = jsonProperty.get("name").getAsString();
+        String pathUnit = jsonProperty.get("pathUnit").getAsString();
+        String objectId = jsonProperty.get("objectId").getAsString();
+        String value = jsonProperty.get("value").getAsString();
+        String type = jsonProperty.get("type").getAsString();
+        
+        
+
+   
+        
+        JsonArray jsonScripts = jsonProperty.getAsJsonArray("scripts");
+
+        Property newProperty = new Property(idStr, objectId, name, pathUnit, value, type);
+
+
+        //-------Scripts--------------------------------------------
+        int scriptsCount = 0;
+        
+        for(JsonElement script:jsonScripts)
+        {
+            
+            Script newScript = Script.parseJsonScriptOnly(script.getAsJsonObject().toString());
+            
+            //insertScriptInDB(newScript);
+            if(newScript != null) newProperty.addScript(newScript);
+            
+            scriptsCount++;
+        }
+        
+        System.out.println("scriptsCount: " + scriptsCount);
+        System.out.println("newProperty.getScripts().size(): " + newProperty.getScripts().size());
+            
+        return newProperty;
+    }
+    
     
 }

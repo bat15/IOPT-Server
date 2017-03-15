@@ -8,7 +8,7 @@
 
 <%@ page import="java.util.*, java.text.*" %>
 
-<%! 
+<% 
     String pageName = "index";
 %>
 <html lang="ru">

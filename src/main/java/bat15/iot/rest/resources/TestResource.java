@@ -43,9 +43,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Cookie;
+//import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -311,6 +312,38 @@ public class TestResource {
         
     }
 
+    
+    @GET
+    @Path("/get_cookie_header")
+    @Produces(MediaType.APPLICATION_JSON)
+//    @Consumes({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML, MediaType.TEXT_PLAIN})
+    public Response getCookieByUserNameInHeader(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request, 
+            @QueryParam("user") String user) {
+    
+        String ip = request.getRemoteAddr();
+        String login = "";
+        
+        try{
+            login = user;
+        }catch(Exception ex){
+            System.out.println("Exception ex: " + ex.getMessage());
+        }
+        
+        
+        //ui.getBaseUri();
+        String cookie = authProcessor.getCookieByLogin(login, ip) + "\n\r";
+        
+        String maxAge = "24*60*60";
+        
+        //Response.ok().cookie(new NewCookie("session", cookie, "/", "193.32.20.242", "0"));
+        
+        if(cookie==null) return Response.status(Response.Status.NOT_FOUND).build();
+        return Response.ok().cookie(new NewCookie("session", cookie)).build();
+    }
+    
+                    
 
     
     
@@ -408,7 +441,7 @@ public class TestResource {
         
         String cookieValue  = null;
         
-        Map<String, Cookie> cookies = headers.getCookies();
+        Map<String, javax.ws.rs.core.Cookie> cookies = headers.getCookies();
         try{
             cookieValue = cookies.get("session").getValue();
         }catch(Exception ex){}

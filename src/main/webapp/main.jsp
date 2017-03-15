@@ -8,8 +8,29 @@
 
 <%@ page import="java.util.*, java.text.*" %>
 
-<%! 
-    String pageName = "main";
+
+<%@ page import="bat15.iot.client.ModelRestClient" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.Map.Entry" %>
+<%@ page import="java.util.NavigableMap" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.Date" %>
+<%@ page import="java.text.DateFormat" %>
+
+
+
+<%--<jsp:setProperty name="ModelRequest" property="user" value="admin" />--%>
+
+
+
+
+<%!
+    String pageName = "main"; 
+    String user = "admin";
+    Date date = new Date();
+    String strDate = date.toString();
+
 %>
 <html lang="ru">
     <head>
@@ -19,26 +40,38 @@
     </head>
     <body>
 
+    <h3>
+        Интернет умных вещей 
+    </h3>
     <div id="tabs">
       <ul>
-        <li><a href="#tabs-1">Preloaded</a></li>
-        <li><a href="ajax/content1.html">Tab 1</a></li>
-        <li><a href="ajax/content2.html">Tab 2</a></li>
-        <li><a href="ajax/content3-slow.php">Tab 3 (slow)</a></li>
-        <li><a href="ajax/content4-broken.php">Tab 4 (broken)</a></li>
+          <li><a href="<%=request.getContextPath()%>/template/default/chunks/ajax/tables/models.jsp">Модели</a></li>
+        <li><a href="<%=request.getContextPath()%>/template/default/chunks/ajax/tables/objects.jsp">Объекты</a></li>
+        <li><a href="ajax/content2.html">Свойства</a></li>
+        <li><a href="ajax/content3-slow.php">Скрипты</a></li>
       </ul>
       <div id="tabs-1">
-        <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.</p>
+          
+
       </div>
+      <div id="tabs-2">
+               
+
+      </div>       
     </div>
 
-        <script>
+<!--        <script>
         $('#datetimepicker1').datetimepicker({
                   lang:'ru'     ,
                   format:'H:i d.m.Y'
                 });
-        </script>  
+        </script>  -->
 
+    <footer>
+        <jsp:include page="template/default/chunks/footer.jsp" >
+            <jsp:param name="pageName" value="<%=pageName%>" />
+        </jsp:include>
+    </footer>
 
     </body>
 </html>

@@ -169,7 +169,7 @@ public class SyncResource {
     public Response saveModels(
             String body, 
             @Context UriInfo uriInfo,
-            @QueryParam("put_test_json") String queryInput, 
+            @QueryParam("user") String queryInput, 
             @Context HttpServletRequest requestContext,
             @Context HttpHeaders headers) 
     {
@@ -192,13 +192,23 @@ public class SyncResource {
         
         if(userId == null) Response.status(Status.FORBIDDEN).build();
         
-        System.out.println(body);
+        if(userId == null)
+        {
+            if(queryInput != null) userId = authProcessor.getUserIdByLogin(queryInput);
+            else Response.status(Status.BAD_REQUEST).build();  
+        }
+        
+        if(userId == null) Response.status(Status.FORBIDDEN).build();   
+        
+        //System.out.println(body);
         
         ArrayList<Model> models = saveModelProcessor.delsertModelsFromShanpshot(body, userId);
         
         System.out.println("models.size(): " + models.size());
         
         JsonParser parser = new JsonParser();
+        
+  
         
         
 //        String id = "";
@@ -230,7 +240,7 @@ public class SyncResource {
 //    public String postTestModelJson(@Context UriInfo uriInfo, @FormParam("put_test_json") String jsonInput) {
     public Response loadModels( 
             @Context UriInfo uriInfo,
-            @QueryParam("put_test_json") String queryInput, 
+            @QueryParam("user") String queryInput,
             @Context HttpServletRequest requestContext,
             @Context HttpHeaders headers) 
     {
@@ -251,8 +261,13 @@ public class SyncResource {
         else 
             userId = authProcessor.getUserIdByHash(hash, false); //cookie
         
-        if(userId == null) Response.status(Status.FORBIDDEN).build();
+        if(userId == null)
+        {
+            if(queryInput != null) userId = authProcessor.getUserIdByLogin(queryInput);
+            else Response.status(Status.BAD_REQUEST).build();  
+        }
         
+        if(userId == null) Response.status(Status.FORBIDDEN).build();  
 
         ArrayList<Model> models = loadModelProcessor.getModelsFromDB(userId);
         
@@ -263,7 +278,7 @@ public class SyncResource {
         
         
         
-        return Response.status(Status.ACCEPTED).entity(snapshot.toString()).build();
+        return Response.status(Status.ACCEPTED).entity(snapshot.toJsonString()).build();
     }
     
    

@@ -5,6 +5,10 @@
  */
 package bat15.iot.entities;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -60,40 +64,6 @@ public class Object {
     ArrayList<Property> properties;   
     
 
-    public String toJsonString()
-    {
-        String result = "{";
-        
-        result += "\"id\":\"" + id + "\",";
-        
-        result += "\"modelId\":\"" + modelId + "\",";
-        
-        result += "\"pathUnit\":\"" + pathUnit + "\",";
-        
-        result += "\"properties\":\"";
-        result += "[";
-        if(properties != null && !properties.isEmpty())
-        {
-            
-            int i = 0;
-            for(Property property:properties)
-            {
-                
-                if(i < properties.size() - 1) result += property.toString() + ",";
-                else result += property.toString();
-                
-                i++;
-            }
-            
-        }
-        result += "]";
-        
-        result += "\"name\":\"" + name + "\" ";
-        
-        result += "}";
-        
-        return result;
-    }
     
     
     
@@ -168,6 +138,93 @@ public class Object {
     
     
     
-    
+    public static bat15.iot.entities.Object parseJsonObjectOnly(String objectBody)
+    {
+        JsonParser parser = new JsonParser();
+        JsonObject jsonObject = parser.parse(objectBody).getAsJsonObject(); 
+        String idStr = jsonObject.get("id").getAsString();
+        String name = jsonObject.get("name").getAsString();
+        String pathUnit = jsonObject.get("pathUnit").getAsString();
         
+        String modelId = jsonObject.get("modelId").getAsString();
+
+        bat15.iot.entities.Object newObject = new bat15.iot.entities.Object(idStr, modelId, name, pathUnit);
+
+
+        return newObject;
+    }  
+    
+    public static bat15.iot.entities.Object parseJsonObjectAndNested(String objectBody)
+    {
+        JsonParser parser = new JsonParser();
+        JsonObject jsonObject = parser.parse(objectBody).getAsJsonObject(); 
+        
+        String idStr = jsonObject.get("id").getAsString();
+        String name = jsonObject.get("name").getAsString();
+        String pathUnit = jsonObject.get("pathUnit").getAsString();
+        
+        String modelId = jsonObject.get("modelId").getAsString();
+        
+
+
+        JsonArray jsonProperties = jsonObject.getAsJsonArray("properties");
+
+        bat15.iot.entities.Object newObject = new bat15.iot.entities.Object(idStr, modelId, name, pathUnit);
+
+
+        //-------PROPERTIES--------------------------------------------
+        int propsCount = 0;
+        
+        for(JsonElement property:jsonProperties)
+        {
+            
+            Property newProperty = Property.parseJsonPropertyAndNested(property.getAsJsonObject().toString());
+            //insertPropertyInDB(newProperty);
+            if(newProperty != null) newObject.addProperty(newProperty);
+            propsCount++;
+        }
+        
+        System.out.println("propsCount: " + propsCount);
+        System.out.println("newObject.getProperties().size(): " + newObject.getProperties().size());
+            
+        return newObject;
+    }
+    
+    
+
+    public String toJsonString()
+    {
+        String result = "{";
+        
+        result += "\"id\":\"" + id + "\",";
+        
+        result += "\"modelId\":\"" + modelId + "\",";
+        
+        result += "\"pathUnit\":\"" + pathUnit + "\",";
+        
+        result += "\"properties\":";
+        result += "[";
+        if(properties != null && !properties.isEmpty())
+        {
+            
+            int i = 0;
+            for(Property property:properties)
+            {
+                
+                if(i < properties.size() - 1) result += property.toJsonString() + ",";
+                else result += property.toJsonString();
+                
+                i++;
+            }
+            
+        }
+        result += "],";
+        
+        result += "\"name\":\"" + name + "\" ";
+        
+        result += "}";
+        
+        return result;
+    }
+    
 }

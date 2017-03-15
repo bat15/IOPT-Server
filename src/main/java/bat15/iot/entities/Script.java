@@ -5,6 +5,10 @@
  */
 package bat15.iot.entities;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -79,6 +83,26 @@ public class Script {
         
         return result;
     }
+    
+    
+    public static Script parseJsonScriptOnly(String scriptBody)
+    {
+        JsonParser parser = new JsonParser();
+        JsonObject jsonScript = parser.parse(scriptBody).getAsJsonObject();    
+        
+        String idStr = jsonScript.get("id").getAsString();
+        String propertyId = jsonScript.get("propertyId").getAsString();
+        
+        String name = jsonScript.get("name").getAsString();
+        String pathUnit = jsonScript.get("pathUnit").getAsString();
+        String value = jsonScript.get("value").getAsString();
+   
+        Script newScript = new Script(idStr, propertyId, name, pathUnit, value);
+         
+        return newScript;
+    }
+    
+
     
     public String getName()
     {

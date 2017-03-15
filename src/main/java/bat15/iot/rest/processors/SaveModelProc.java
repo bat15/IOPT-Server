@@ -176,21 +176,28 @@ public class SaveModelProc {
 
         Long id = null;
         
-        id = Long.parseLong(model.getId());
         
+        try{
+            id = Long.parseLong(model.getId());
+        }catch(Exception ex){
+            System.out.println("PARSE EXEPTION");
+        }
         
         
         System.out.println("BEFORE INSERT");
         
         if(id < 0 || id==null)
             id = connection.getMaxId(Settings.MODELS_TABLE_NAME);
-   
+
 
         id++;
         
+        
+        System.out.println("!!!!!! id: " + id);
+        
         HashMap<String, String> fields = new HashMap();
         fields.put("id", id.toString());
-        fields.put("id_user", model.geUsertId());
+        fields.put("id_user", model.getUsertId());
 
         fields.put("name", model.getName());
         fields.put("path_unit", model.getPathUnit());
@@ -326,127 +333,7 @@ public class SaveModelProc {
     
     
     
-    
-    
-    public String getModel(String modelQuery){
-        
-        String testData = "FAIL";
-        String jsonData = "NONE";
-         
-        if(modelQuery == null) {
-            testData = "[{error: null}]";
-            return testData;
-        }
-        else if(modelQuery.isEmpty()) {
-            testData = "[{error : no_model_name_defined}]";
-            return testData;
-        }
-        
-        String model = "";
-        String object = "";
-        String property = "";
-        String script = "";
-        
-        ArrayList<String> paths = new ArrayList();
-        
-        System.out.println("modelQuery: " + modelQuery);
-        
-        paths.addAll(Arrays.asList(modelQuery.split("/")));
-        
-        
-        
-        
-        switch (paths.size()) {
-            case 0://error - no model_name defined
-                testData = "[{error : no_model_name_defined}]";
-                System.out.println("case 0 size: " + paths.size());
-                System.out.println("!!! " + testData);
-                
-                break;
-            case 1://model_name
-                System.out.println("case 1 size: " + paths.size());
-                try{
-                    model = paths.get(0);
-                    testData = "[{model: " + model + "}]";
-                    
-                }catch(Exception ex){
-                    System.out.println("!!! " + testData);
-                }
-                
-                
-                
-                break;
-            case 2://object_name
-                System.out.println("case 2 size: " + paths.size());
-                
-                try{
-                    model = paths.get(0);
-                    object = paths.get(1);
-                    testData = "[{model: " + model + "}, {object:" + object + "}]";
-                    System.out.println("!!! " + testData);
-                }catch(Exception ex){}
-                
-                
-                
-                break;
-            case 3://property_name
-                try{
-                    String tmpStr = (new Date()).toString() + (new Random()).nextInt(1000);
-                    
-
-                    model = paths.get(0);
-                    object = paths.get(1);
-                    property = paths.get(2);                    
-                    
-                    tmpStr = "random" + (tmpStr.hashCode() + "").replace("-", "");   
-                    
-                    
-                    testData = "[{model: " + model + "}, {object:" + object + "}, {property: { name:" + property+ ", value:" + tmpStr + "}}]";
-                    System.out.println("!!! " + testData);
-                }catch(Exception ex){}
-                
-               
-                
-                String propValue = getProperty(property);
-                
-                if(propValue != null) {
-                    System.out.println("propValue: " + propValue);
-                    
-                    jsonData = "{ \"id\": \"" + property + "\", \"value\":\"" + propValue + "\" }";
-                }
-                else jsonData = "null";
-                
-                
-                    
-                break;
-                
-            case 4://script_name
-                try{
-                    
-                    model = paths.get(0);
-                    object = paths.get(1);
-                    property = paths.get(2);
-                    script = paths.get(3);                    
-                    testData = "[{model: " + model + "}, {object:" + object + "}, {property:" + property + "}, {script: { name:" + script + ", value: js_code}}]";
-                    System.out.println("!!! " + testData);
-                }catch(Exception ex){}
-                
-
-                
-                break;      
-            default://error - to much arguments
-                testData = "[{error : to_much_arguments}]";
-                System.out.println("!!! " + testData);
-                break;
-        }
-            
-        String response;
-        
-                
-        return  jsonData;
-    }
-    
-    
+//  
     
     public ArrayList<Model> delsertModelsFromShanpshot(String body, String userId)
     {
@@ -458,16 +345,15 @@ public class SaveModelProc {
 //        ArrayList<bat15.iot.entities.Object> objects = new ArrayList();
 //        ArrayList<Property> properties = new ArrayList();
 //        ArrayList<Script> scripts = new ArrayList();
+
+        System.out.println("userId: " + userId);
         
         
-        
+        connection.deleteFromTableByUserId(Settings.MODELS_TABLE_NAME, userId);
+
         for(JsonElement model:jsonModels)
         {
-            
             Model newModel = constructModelsFromJson(model.getAsJsonObject(), userId);
-            
-            
-            //insertModelInDB(newModel);
             if(newModel != null) models.add(newModel);
         }
         
@@ -475,6 +361,8 @@ public class SaveModelProc {
         for(Model model:models){
             
             Long modelId = insertModelInDB(model);
+            
+            System.out.println("modelId: " + modelId);
             
             for(bat15.iot.entities.Object object:model.getObjects()){
                 
@@ -504,16 +392,10 @@ public class SaveModelProc {
 
         JsonArray jsonObjects = jsonModel.getAsJsonArray("objects");
      
-        Long tmpLong = null;
-        
-        try{
-            tmpLong = Long.parseLong(userId);
-        }catch(Exception ex){}
+
         
         
-        connection.deleteFromTableById(Settings.MODELS_TABLE_NAME, tmpLong);
-        
-        
+  
 
         Model newModel = new Model(idStr,userId , name, pathUnit);
 
@@ -524,7 +406,7 @@ public class SaveModelProc {
         for(JsonElement object:jsonObjects)
         {
             
-            bat15.iot.entities.Object newObject = constructObjectsFromJson(object.getAsJsonObject(), idStr);
+            bat15.iot.entities.Object newObject = constructObjectsFromJson(object.getAsJsonObject());
             //insertObjectInDB(newObject);
             if(newObject != null) newModel.addObject(newObject);
             objectsCount++;
@@ -537,7 +419,7 @@ public class SaveModelProc {
     }
     
     
-    protected bat15.iot.entities.Object constructObjectsFromJson(JsonObject jsonObject, String nestedModelId)
+    protected bat15.iot.entities.Object constructObjectsFromJson(JsonObject jsonObject)
     {
         String idStr = jsonObject.get("id").getAsString();
         String name = jsonObject.get("name").getAsString();
@@ -561,7 +443,7 @@ public class SaveModelProc {
         for(JsonElement property:jsonProperties)
         {
             
-            Property newProperty = constructPropertiesFromJson(property.getAsJsonObject(), idStr);
+            Property newProperty = constructPropertiesFromJson(property.getAsJsonObject());
             //insertPropertyInDB(newProperty);
             if(newProperty != null) newObject.addProperty(newProperty);
             propsCount++;
@@ -573,7 +455,7 @@ public class SaveModelProc {
         return newObject;
     }
     
-    protected Property constructPropertiesFromJson(JsonObject jsonProperty, String nestedObjectId)
+    protected Property constructPropertiesFromJson(JsonObject jsonProperty)
     {
         String idStr = jsonProperty.get("id").getAsString();
         String name = jsonProperty.get("name").getAsString();
@@ -597,7 +479,7 @@ public class SaveModelProc {
         for(JsonElement script:jsonScripts)
         {
             
-            Script newScript = constructScriptFromJson(script.getAsJsonObject(), idStr);
+            Script newScript = constructScriptFromJson(script.getAsJsonObject());
             
             //insertScriptInDB(newScript);
             if(newScript != null) newProperty.addScript(newScript);
@@ -611,7 +493,7 @@ public class SaveModelProc {
         return newProperty;
     }
     
-    protected Script constructScriptFromJson(JsonObject jsonScript, String nestedPropertyId)
+    protected Script constructScriptFromJson(JsonObject jsonScript)
     {
         String idStr = jsonScript.get("id").getAsString();
         String propertyId = jsonScript.get("propertyId").getAsString();
@@ -634,69 +516,192 @@ public class SaveModelProc {
     
     
     
+//    
+//    public String getProperty(String id)
+//    {
+//        String value = null;
+//        
+//        String resultKey = "value";
+//        
+//        
+//        
+//        try{
+//            value = connection.selectValue(Settings.PROPERTIES_TABLE_NAME, "\"" +resultKey + "\"", "id", id);
+//        } catch(Exception ex){
+//            System.out.println();
+//        }
+//        
+//        return value;
+//    }
     
-    public String getProperty(String id)
-    {
-        String value = null;
-        
-        String resultKey = "value";
-        
-        
-        
-        try{
-            value = connection.selectValue(Settings.PROPERTIES_TABLE_NAME, "\"" +resultKey + "\"", "id", id);
-        } catch(Exception ex){
-            System.out.println();
-        }
-        
-        return value;
-    }
+    
+//    public String getModelFromSnapshotJson(String snapshotJson, String modelId)
+//    {
+//     
+//        JsonObject snapshotObject = null;
+//        
+//        try{
+//            snapshotObject = (JsonObject) jsonParser.parse(snapshotJson);
+//        }catch(Exception ex){} 
+//        
+//        JsonArray models = snapshotObject.getAsJsonArray("Models");
+//
+//        
+//        JsonObject modelJson = null;
+//        for(int i=0; i<models.size(); i++){
+//            
+//            
+//            
+//            JsonObject innerObject = (JsonObject) models.get(i);
+//            
+//                System.out.println("The " + i + " element of the models array: "+ innerObject);
+//                
+////                String currentModelId = (String)innerObject.get("ModelId");
+//                
+////                if(currentModelId.equals(modelId)) return innerObject.toJSONString(); 
+//        }
+//      
+//        return "NOT_FOUND";
+//    }
     
     
-    public String getModelFromSnapshotJson(String snapshotJson, String modelId)
-    {
-     
-        JsonObject snapshotObject = null;
-        
-        try{
-            snapshotObject = (JsonObject) jsonParser.parse(snapshotJson);
-        }catch(Exception ex){} 
-        
-        JsonArray models = snapshotObject.getAsJsonArray("Models");
+//    public void putProperty(String propertyJson)
+//    {
+//        
+//        
+//        JsonObject snapshotObject = null;
+//        
+//        try{
+//            snapshotObject = (JsonObject) jsonParser.parse(propertyJson);
+//        }catch(Exception ex){}
+//        
+//        
+//        System.out.println("snapshotObject: " + snapshotObject);
+//    }
 
-        
-        JsonObject modelJson = null;
-        for(int i=0; i<models.size(); i++){
-            
-            
-            
-            JsonObject innerObject = (JsonObject) models.get(i);
-            
-                System.out.println("The " + i + " element of the models array: "+ innerObject);
-                
-//                String currentModelId = (String)innerObject.get("ModelId");
-                
-//                if(currentModelId.equals(modelId)) return innerObject.toJSONString(); 
-        }
-      
-        return "NOT_FOUND";
-    }
     
+  
+//    
+//    public String getModel(String modelQuery){
+//        
+//        String testData = "FAIL";
+//        String jsonData = "NONE";
+//         
+//        if(modelQuery == null) {
+//            testData = "[{error: null}]";
+//            return testData;
+//        }
+//        else if(modelQuery.isEmpty()) {
+//            testData = "[{error : no_model_name_defined}]";
+//            return testData;
+//        }
+//        
+//        String model = "";
+//        String object = "";
+//        String property = "";
+//        String script = "";
+//        
+//        ArrayList<String> paths = new ArrayList();
+//        
+//        System.out.println("modelQuery: " + modelQuery);
+//        
+//        paths.addAll(Arrays.asList(modelQuery.split("/")));
+//        
+//        
+//        
+//        
+//        switch (paths.size()) {
+//            case 0://error - no model_name defined
+//                testData = "[{error : no_model_name_defined}]";
+//                System.out.println("case 0 size: " + paths.size());
+//                System.out.println("!!! " + testData);
+//                
+//                break;
+//            case 1://model_name
+//                System.out.println("case 1 size: " + paths.size());
+//                try{
+//                    model = paths.get(0);
+//                    testData = "[{model: " + model + "}]";
+//                    
+//                }catch(Exception ex){
+//                    System.out.println("!!! " + testData);
+//                }
+//                
+//                
+//                
+//                break;
+//            case 2://object_name
+//                System.out.println("case 2 size: " + paths.size());
+//                
+//                try{
+//                    model = paths.get(0);
+//                    object = paths.get(1);
+//                    testData = "[{model: " + model + "}, {object:" + object + "}]";
+//                    System.out.println("!!! " + testData);
+//                }catch(Exception ex){}
+//                
+//                
+//                
+//                break;
+//            case 3://property_name
+//                try{
+//                    String tmpStr = (new Date()).toString() + (new Random()).nextInt(1000);
+//                    
+//
+//                    model = paths.get(0);
+//                    object = paths.get(1);
+//                    property = paths.get(2);                    
+//                    
+//                    tmpStr = "random" + (tmpStr.hashCode() + "").replace("-", "");   
+//                    
+//                    
+//                    testData = "[{model: " + model + "}, {object:" + object + "}, {property: { name:" + property+ ", value:" + tmpStr + "}}]";
+//                    System.out.println("!!! " + testData);
+//                }catch(Exception ex){}
+//                
+//               
+//                
+//                String propValue = getProperty(property);
+//                
+//                if(propValue != null) {
+//                    System.out.println("propValue: " + propValue);
+//                    
+//                    jsonData = "{ \"id\": \"" + property + "\", \"value\":\"" + propValue + "\" }";
+//                }
+//                else jsonData = "null";
+//                
+//                
+//                    
+//                break;
+//                
+//            case 4://script_name
+//                try{
+//                    
+//                    model = paths.get(0);
+//                    object = paths.get(1);
+//                    property = paths.get(2);
+//                    script = paths.get(3);                    
+//                    testData = "[{model: " + model + "}, {object:" + object + "}, {property:" + property + "}, {script: { name:" + script + ", value: js_code}}]";
+//                    System.out.println("!!! " + testData);
+//                }catch(Exception ex){}
+//                
+//
+//                
+//                break;      
+//            default://error - to much arguments
+//                testData = "[{error : to_much_arguments}]";
+//                System.out.println("!!! " + testData);
+//                break;
+//        }
+//            
+//        String response;
+//        
+//                
+//        return  jsonData;
+//    }
+//    
+//      
     
-    public void putProperty(String propertyJson)
-    {
-        
-        
-        JsonObject snapshotObject = null;
-        
-        try{
-            snapshotObject = (JsonObject) jsonParser.parse(propertyJson);
-        }catch(Exception ex){}
-        
-        
-        System.out.println("snapshotObject: " + snapshotObject);
-    }
-
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
 

@@ -228,7 +228,25 @@ public class AuthProc {
         
         
         return userId;     
-    }    
+    }   
+    
+    public String getUserIdByLogin(String login)
+    {
+        
+        boolean flag = false;
+        String userId = null;
+            
+
+        try{
+            userId = connection.selectValue(Settings.USERS_TABLE_NAME, "\"id\"", "login", login);
+        }catch(Exception ex){
+            flag = false;
+        }              
+
+        return userId;     
+    }      
+    
+    
     
     
     

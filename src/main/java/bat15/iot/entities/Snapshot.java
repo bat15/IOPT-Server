@@ -5,6 +5,10 @@
  */
 package bat15.iot.entities;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,7 +27,7 @@ public class Snapshot {
     
     public Snapshot()
     {
-        this.id = null;
+        this.id = "1";
         models = new ArrayList();
         dashboards = new ArrayList();
         
@@ -64,7 +68,7 @@ public class Snapshot {
         if(id != null && !id.isEmpty()) result += "\"id\":\"" + id + "\",";
         else result += "\"id\":\"null\",";
         
-        result += "\"models\":\"";
+        result += "\"models\":";
         result += "[";
         if(models != null && !models.isEmpty())
         {
@@ -73,8 +77,8 @@ public class Snapshot {
             for(Model model:models)
             {
                 
-                if(i < models.size() - 1) result += model.toString() + ",";
-                else result += model.toString();
+                if(i < models.size() - 1) result += model.toJsonString() + ",";
+                else result += model.toJsonString();
                 
                 i++;
             }
@@ -82,7 +86,7 @@ public class Snapshot {
         }
         result += "],";
         
-        result += "\"dashboards\":\"";
+        result += "\"dashboards\":";
         result += "[";
         if(!dashboards.isEmpty())
         {
@@ -91,8 +95,8 @@ public class Snapshot {
             for(Dashboard dashboard:dashboards)
             {
                 
-                if(i < dashboards.size() - 1) result += dashboard.toString() + ",";
-                else result += dashboard.toString();
+                if(i < dashboards.size() - 1) result += dashboard.toJsonString() + ",";
+                else result += dashboard.toJsonString();
                 
                 
                 i++;
@@ -108,9 +112,69 @@ public class Snapshot {
         return result;
     }
     
-    
-    
+    public static Snapshot parseJsonRootOnly(String snapshotBody)
+    {
+        JsonParser parser = new JsonParser();
+        JsonObject jsonModel = parser.parse(snapshotBody).getAsJsonObject();
+        
+        
+        String id = null;
+        
+        try{
+            id = jsonModel.get("id").getAsString();
+        }catch(Exception ex){
+            throw new RuntimeException("Parse Exeption: no id fields found");
+        }
+        
+        Snapshot newSnapshot = new Snapshot(id);
 
+        return newSnapshot;
+    } 
+
+    public static ArrayList<Model> parseJsonModelAndNested(String snapshotBody)
+    {
+        JsonParser parser = new JsonParser();
+        
+        
+        ArrayList<Model> models = new ArrayList();
+        
+        JsonArray jsonModels = parser.parse(snapshotBody).getAsJsonObject().getAsJsonArray("models"); 
+        
+        JsonObject jsonModel = parser.parse(snapshotBody).getAsJsonObject();
+        
+        
+        String id = null;
+        
+        try{
+            id = jsonModel.get("id").getAsString();
+        }catch(Exception ex){
+            throw new RuntimeException("Parse Exeption: no id fields found");
+        }
+
+        Snapshot newSnapshot = new Snapshot(id);
+
+
+        //-------Models--------------------------------------------
+        int objectsCount = 0;
+        
+        for(JsonElement model:jsonModels)
+        {
+            String modelStr = model.getAsJsonObject().toString();
+            
+            if(modelStr== null) throw new RuntimeException("model: " + modelStr);
+            
+            Model newModel = Model.parseJsonModelAndNested(modelStr, id);
+            //insertObjectInDB(newObject);
+            if(newModel != null) models.add(newModel);
+            objectsCount++;
+        }
+            
+        System.out.println("objectsCount: " + objectsCount);
+        System.out.println("newModel.getObjects().size(): " + newSnapshot.getModels().size());
+        
+        return models;
+    }
+    
     
     public String getId()
     {

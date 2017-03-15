@@ -105,7 +105,7 @@ public class JDBCConnection {
                   "' AND dat>'" + startDate +
                   "' AND dat<'" + endData + "';";
             
-            System.out.println("SQL_Str: " + sql);
+//            System.out.println("SQL_Str: " + sql);
             
             rs = stmt.executeQuery(sql);
         } catch (Exception e){
@@ -134,7 +134,7 @@ public class JDBCConnection {
             while (rs.next()) {
                 resultSize++;
                 
-                System.out.println("table_name: " + rs.getObject("table_name"));
+//                System.out.println("table_name: " + rs.getObject("table_name"));
                 
                 try{
                     tables.add(rs.getString("table_name"));
@@ -167,7 +167,7 @@ public class JDBCConnection {
         selectQuery += fromTablesQuery + whereConditionsQuery;
 
                 
-        System.out.println("SELECT Query: " + selectQuery);
+//        System.out.println("SELECT Query: " + selectQuery);
                 
         try (Statement results = jdbcConn.createStatement()) {   
             try(ResultSet rs = results.executeQuery(selectQuery))
@@ -333,7 +333,7 @@ public class JDBCConnection {
         
         selectQuery += whereConditionsQuery;
         
-        System.out.println("SELECT Query: " + selectQuery);
+//        System.out.println("SELECT Query: " + selectQuery);
         
         try (Statement results = jdbcConn.createStatement()) {       
             rs = results.executeQuery(selectQuery);
@@ -388,7 +388,7 @@ public class JDBCConnection {
         
         selectQuery += whereConditionsQuery;
         
-        System.out.println("SELECT Query: " + selectQuery);
+//        System.out.println("SELECT Query: " + selectQuery);
         
         try (Statement results = jdbcConn.createStatement()) {       
             rs = results.executeQuery(selectQuery);
@@ -442,7 +442,7 @@ public class JDBCConnection {
         
         selectQuery += whereConditionsQuery;
         
-        System.out.println("selectQuery: " + selectQuery);
+//        System.out.println("selectQuery: " + selectQuery);
         
         int resultSize = 0;
         
@@ -524,7 +524,7 @@ public class JDBCConnection {
         selectQuery += whereConditionsQuery;
         
         
-        System.out.println("selectQuery: " + selectQuery);
+//        System.out.println("selectQuery: " + selectQuery);
         
         
         
@@ -537,9 +537,9 @@ public class JDBCConnection {
                 for(String key:searchKeys)
                 {
                     key = key.replace("\"", "");
-                    String value = rs.getString(key);
+                    String value = rs.getObject(key) + "";
 
-                    System.out.println("key: " + key + " value: " + value);
+//                    System.out.println("key: " + key + " value: " + value);
 
                     try{
                         resultHashMap.put(key, value);
@@ -579,7 +579,7 @@ public class JDBCConnection {
         
         selectQuery += fromQuery + whereQuery;
         
-        System.out.println("selectQuery: " + selectQuery);
+//        System.out.println("selectQuery: " + selectQuery);
         
         HashMap<String, String> result = new HashMap();
         
@@ -612,7 +612,7 @@ public class JDBCConnection {
         
         selectQuery += fromQuery + whereQuery;
         
-        System.out.println("selectQuery: " + selectQuery);
+//        System.out.println("selectQuery: " + selectQuery);
         
         HashMap<String, String> result = new HashMap();
         
@@ -646,7 +646,7 @@ public class JDBCConnection {
         
         selectQuery += fromQuery + whereQuery;
         
-        System.out.println("selectQuery: " + selectQuery);
+//        System.out.println("selectQuery: " + selectQuery);
         
         HashMap<String, String> result = new HashMap();
         
@@ -680,7 +680,7 @@ public class JDBCConnection {
         
         selectQuery += fromQuery + whereQuery;
         
-        System.out.println("selectQuery: " + selectQuery);
+//        System.out.println("selectQuery: " + selectQuery);
         
         HashMap<String, String> result = new HashMap();
         
@@ -694,7 +694,7 @@ public class JDBCConnection {
                     String updateQuery = "UPDATE \"script\" SET \"value\"='" + value + "'";
                     updateQuery += " WHERE \"id\"=" + id + ";";
                     
-                    System.out.println("updateQuery: " + updateQuery);
+//                    System.out.println("updateQuery: " + updateQuery);
                     
                     results.executeUpdate(updateQuery);
                     
@@ -725,7 +725,7 @@ public class JDBCConnection {
         
         selectQuery += fromQuery + whereQuery;
         
-        System.out.println("selectQuery: " + selectQuery);
+//        System.out.println("selectQuery: " + selectQuery);
         
         HashMap<String, String> result = new HashMap();
         
@@ -738,7 +738,7 @@ public class JDBCConnection {
                     
                     String updateQuery = "UPDATE \"property\" SET \"value\"='" + value + "'";
                     updateQuery += " WHERE \"id\"=" + id;
-                    System.out.println("updateQuery: " + updateQuery);
+//                    System.out.println("updateQuery: " + updateQuery);
                     
                     results.executeUpdate(updateQuery);
                     
@@ -771,7 +771,7 @@ public class JDBCConnection {
         
         selectQuery += fromQuery + whereQuery;
         
-        System.out.println("selectQuery: " + selectQuery);
+//        System.out.println("selectQuery: " + selectQuery);
         
         HashMap<String, String> result = new HashMap();
         
@@ -834,7 +834,7 @@ public class JDBCConnection {
         
         String insertQuery = insertQueryBuilder.toString();
 
-        System.out.println("INSERT Query: " + insertQuery);
+//        System.out.println("INSERT Query: " + insertQuery);
         
         
         try (Statement results = jdbcConn.createStatement()) {       
@@ -854,9 +854,15 @@ public class JDBCConnection {
     {
         Long resultValue = null;
         
-        if(countAll(tableName) <= 0){
-            System.out.println("countAll(tableName): " + countAll(tableName));
-            return new Long(0);
+        try{
+            if(countAll(tableName) <= 0){
+
+
+                System.out.println("countAll(tableName): " + countAll(tableName));
+                return new Long(0);
+            }
+        }catch(Exception ex){
+            
         }
         
         String selectQuery = "SELECT max(id)";
@@ -864,13 +870,17 @@ public class JDBCConnection {
 
         selectQuery += fromTablesQuery;
 
+        
+//        System.out.println("MAX_ID selectQuery: " + selectQuery);
+        
+        
         try (Statement results = jdbcConn.createStatement()) {   
             try(ResultSet rs = results.executeQuery(selectQuery))
             {
-            rs.next();
-            resultValue =  rs.getLong("max");
-            }catch(Exception ex){
-                
+                rs.next();
+                resultValue =  rs.getLong("max");
+                }catch(Exception ex){
+                    System.out.println("MAX_ID EXCEPTION: ");
             }
         }
         catch(Exception ex){
@@ -878,27 +888,25 @@ public class JDBCConnection {
             return resultValue;
         }
         
+        System.out.println("MAX_ID value: " + resultValue);
+        
         return resultValue;
     }
     
-    public void deleteFromTableById(String tableName, Long id)
+    public void deleteFromTableByUserId(String tableName, String id)
     {
         String resultValue = null;
         
         String selectQuery = "DELETE ";
         String fromTablesQuery = " FROM \"" + tableName + "\" ";
-        String whereConditionsQuery = " WHERE \"id\"=" + id + " ";
+        String whereConditionsQuery = " WHERE \"id_user\"=" + id + " ";
         
         selectQuery += fromTablesQuery + whereConditionsQuery;
 
         try (Statement results = jdbcConn.createStatement()) {   
-            try(ResultSet rs = results.executeQuery(selectQuery))
-            {
-                rs.next();
-                resultValue =  rs.getObject(1, String.class);
-            }catch(Exception ex){
-                
-            }
+
+            results.executeUpdate(selectQuery);
+ 
         }
         catch(Exception ex){
             System.out.println("[EXCEPTION] DELETE MODELs: " + selectQuery + "\n\rResult: " + resultValue);

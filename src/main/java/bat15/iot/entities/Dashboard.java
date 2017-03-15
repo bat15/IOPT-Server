@@ -10,35 +10,94 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author Павел
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name="Dashboard")
+@XmlRootElement(name="dashboard")
 public class Dashboard {
 
-    @XmlElement(name="Id")
+    @XmlElement(name="id")
     protected String id;
     
-    @XmlElement(name="Parent")
+    @XmlElement(name="parent")
     protected Object parent;
 
-    @XmlElement(name="Mappings")
+    @XmlElement(name="mappings")
     protected ArrayList<PropertyMap> mappings;
 
+    @XmlTransient
     public class PropertyMap
     {
+        @XmlTransient
+        protected Integer id;
+        
+        @XmlTransient
         protected  Property property;
         
-        protected  boolean isControl;
+        @XmlTransient
+        protected  Boolean isControl;
         
-        protected  int min;
+        @XmlTransient
+        protected  Integer min;
         
-        protected  int max;
+        @XmlTransient
+        protected  Integer max;
         
         
+        
+        public String toJsonString()
+        {
+            String result = "{";
+
+            if(this.id != null)result += "\"id\":\"" + this.id + "\",";
+
+            if(isControl!=null) result += "\"isControl\":\"" + isControl + "\",";
+
+            if(min!=null) result += "\"min\":\"" + min + "\",";
+
+
+            if(max!=null) result += "\"max\":\"" + max + "\",";
+
+            if(property!=null) result += "\"property\":\"" + property.getName() + "\" ";
+
+            result += "}";
+
+            return result;
+        }
+    }
+    
+    
+    public String toJsonString()
+    {
+        String result = "{";
+        
+        if(id != null) result += "\"id\":\"" + id + "\",";
+        result += "\"mappings\":";
+        result += "[";
+        if(mappings != null && !mappings.isEmpty())
+        {
+            
+            int i = 0;
+            for(PropertyMap mapping:mappings)
+            {
+                
+                if(i < mappings.size() - 1) result += mapping.toJsonString() + ",";
+                else result += mapping.toJsonString();
+                
+                i++;
+            }
+            
+        }
+        result += "]";
+       
+        
+        result += "}";
+        
+        return result;
     }
     
     
