@@ -27,19 +27,21 @@
 
 <%!
     String pageName = "main"; 
-    String user = "admin";
+    String user = "devops";
     Date date = new Date();
     String strDate = date.toString();
 
 %>
-<html lang="ru">
+<html>
     <head>
         <jsp:include page="template/default/chunks/head.jsp" >
             <jsp:param name="pageName" value="<%=pageName%>" />
         </jsp:include>
     </head>
     <body>
-
+   <jsp:include page="template/default/chunks/header.jsp" >
+        <jsp:param name="pageName" value="<%=pageName%>" />
+    </jsp:include>
     <h3>
         Интернет умных вещей 
     </h3>
@@ -47,8 +49,8 @@
       <ul>
           <li><a href="<%=request.getContextPath()%>/template/default/chunks/ajax/tables/models.jsp">Модели</a></li>
         <li><a href="<%=request.getContextPath()%>/template/default/chunks/ajax/tables/objects.jsp">Объекты</a></li>
-        <li><a href="ajax/content2.html">Свойства</a></li>
-        <li><a href="ajax/content3-slow.php">Скрипты</a></li>
+        <li><a href="<%=request.getContextPath()%>/template/default/chunks/ajax/tables/properties.jsp">Свойства</a></li>
+        <li><a href="<%=request.getContextPath()%>/template/default/chunks/ajax/tables/scripts.jsp">Скрипты</a></li>
       </ul>
       <div id="tabs-1">
           
@@ -67,11 +69,27 @@
                 });
         </script>  -->
 
-    <footer>
-        <jsp:include page="template/default/chunks/footer.jsp" >
-            <jsp:param name="pageName" value="<%=pageName%>" />
-        </jsp:include>
-    </footer>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+    <script>
+
+        
+      $( "#tabs" ).tabs({
+        beforeLoad: function( event, ui ) {
+          ui.jqXHR.fail(function() {
+            ui.panel.html(
+              "Ошибка!  " +
+              "Нет данных." );
+          });
+        }
+      });
+    } );
+    </script>
+
+
 
     </body>
 </html>

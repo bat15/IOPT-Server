@@ -12,19 +12,18 @@
 %>
 
 
-<meta http-equiv="Content-Type" content="text/html">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>IOPT - Internet Of Pretty Things</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+        <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+        <title>IOPT - Internet Of Pretty Things</title>
 
-        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-        <!--<link rel="stylesheet" href="/resources/demos/style.css">-->
   
         <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/template/default/css/style.css" media="screen, projection" />
         <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/template/datetimepicker/jquery.datetimepicker.css"/>
-        <!--<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/template/table/css/dataTables.tableTools.min.css">-->
-        <!--<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/template/table/css/jquery.dataTables.css">-->
+        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/template/table/css/dataTables.tableTools.min.css">
+        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/template/table/css/jquery.dataTables.css">
 
-
+        <script src="<%=request.getContextPath()%>/template/datetimepicker/jquery.js"></script>
+        <script src="<%=request.getContextPath()%>/template/datetimepicker/jquery.datetimepicker.js"></script>
     
 

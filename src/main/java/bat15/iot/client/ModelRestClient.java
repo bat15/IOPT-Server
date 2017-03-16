@@ -109,6 +109,8 @@ public class ModelRestClient {
         
         modelsHtmlTable = "";
         objectsHtmlTable = "";
+        propertiesHtmlTable = "";
+        scriptsHtmlTable = "";
         prepareTablesFromModels(models);
         
         
@@ -127,6 +129,20 @@ public class ModelRestClient {
                 if(objectsHtmlTable!=null){
                     System.out.println("objectsHtmlTable: "+ objectsHtmlTable);
                     return objectsHtmlTable;
+                }
+                else return "NULL_RESPONSE";
+            case "properties":
+                
+                if(propertiesHtmlTable!=null){
+                    System.out.println("objectsHtmlTable: "+ propertiesHtmlTable);
+                    return propertiesHtmlTable;
+                }
+                else return "NULL_RESPONSE";
+            case "scripts":
+                
+                if(scriptsHtmlTable!=null){
+                    System.out.println("objectsHtmlTable: "+ scriptsHtmlTable);
+                    return scriptsHtmlTable;
                 }
                 else return "NULL_RESPONSE";
             default: 
@@ -223,6 +239,26 @@ public class ModelRestClient {
 
             try {
                 
+                String type = null;
+                
+                switch(property.getType())
+                {
+                    case "3":
+                        type = "Boolean";
+                        break;
+                    case "9":
+                        type = "Integer";
+                        break;
+                    case "14":
+                        type = "Double";
+                        break;
+                    case "18":
+                        type = "String";
+                        break;
+                    default:
+                        type = "undefined";
+                }
+                
                 propertiesBuilder.append("<tr>\n");
                 
                 propertiesBuilder.append("<td>").append(property.getId()).append("</td>\n");
@@ -231,7 +267,7 @@ public class ModelRestClient {
                 propertiesBuilder.append("<td>").append(parentFields.get("parentName")).append("</td>\n");
                 propertiesBuilder.append("<td>").append(property.getPathUnit()).append("</td>\n");
                 propertiesBuilder.append("<td>").append(property.getValue()).append("</td>\n");
-                propertiesBuilder.append("<td>").append(property.getType()).append("</td>\n");
+                propertiesBuilder.append("<td>").append(type).append("</td>\n");
 
                 propertiesBuilder.append("</tr>\n");
                 

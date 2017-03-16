@@ -18,9 +18,19 @@
     }
 %>
 
-<header>
+<div id="header">
     
     <h1>Добро пожаловать <% if(pageName.equals("main")) out.print(" на главной странице"); %>!</h1>
     <i>Сегодня <%= getFormattedDate() %></i>
+
+	<div id="main_navigation">
+            <a class="button" href="<%=request.getContextPath()%>/index.jsp" > Вход </a>
+            <a class="button" href="<%=request.getContextPath()%>/main.jsp" > Панель мониторинга </a>
+            <a class="button" href="<%=request.getContextPath()%>/models.jsp" > Модели </a>
+            <a class="button" href="<%=request.getContextPath()%>/objects.jsp" > Объекты </a>
+            <a class="button" href="<%=request.getContextPath()%>/properties.jsp" > Свойства </a>
+            <a class="button" href="<%=request.getContextPath()%>/scripts.jsp" > Скрипты </a>
+	</div>    
     
-</header>
+    
+</div>
