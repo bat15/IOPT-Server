@@ -23,7 +23,4 @@
         <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/template/table/css/dataTables.tableTools.min.css">
         <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/template/table/css/jquery.dataTables.css">
 
-        <script src="<%=request.getContextPath()%>/template/datetimepicker/jquery.js"></script>
-        <script src="<%=request.getContextPath()%>/template/datetimepicker/jquery.datetimepicker.js"></script>
-    
 

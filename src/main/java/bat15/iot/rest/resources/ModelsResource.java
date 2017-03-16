@@ -9,6 +9,7 @@ import bat15.iot.entities.Model;
 import bat15.iot.entities.Snapshot;
 import bat15.iot.rest.interfaces.PATCH;
 import bat15.iot.rest.processors.AuthProc;
+import bat15.iot.rest.processors.LoadModelProc;
 import bat15.iot.rest.processors.ModelsProc;
 import bat15.iot.rest.processors.SaveModelProc;
 import com.google.gson.JsonParser;
@@ -83,7 +84,7 @@ import javax.ws.rs.core.Response.Status;
  *
  * @author Павел
  */
-@Path("/models")
+@Path("/")
 public class ModelsResource {
     
     @Resource(lookup = "IOPT-Server")
@@ -103,6 +104,10 @@ public class ModelsResource {
     @EJB (beanName="AuthProc")
     AuthProc authProcessor;   
     
+    
+    @EJB (beanName="LoadModelProc")
+    LoadModelProc loadModelProcessor;  
+    
     @EJB (beanName="SaveModelProc")
     SaveModelProc saveModelProcessor;    
     /**
@@ -111,7 +116,7 @@ public class ModelsResource {
     public ModelsResource() {
     }
     
-    
+
     
 
     String getTestFile = "test_model.json";
@@ -153,21 +158,34 @@ public class ModelsResource {
 //    }
 //        
     @GET
-    @Path("/{path:.*}")
+//    @Path("{path:.*}")
+    @Path("models{inner_dirs:.*}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getModelByPath(
-            @PathParam("path") String path, 
+            @PathParam("inner_dirs") String innerDirs, 
             @QueryParam("min") String minParam,
+            @QueryParam("user") String queryInput,
             @Context HttpServletRequest requestContext,
             @Context HttpHeaders headers) 
     {
+        
+        System.out.println("innerDirs: " + innerDirs);
+        
+        System.out.println("queryInput: " + queryInput);
+        
+        String path = "";
+        if(innerDirs == null)
+            return Response.status(Status.NOT_FOUND).build();
+        else path = innerDirs;
+        
+        
         
         
         String hash = null;
         String userId = null;
         String name = null;
         
-        
+//        if(!path.contains("/") && queryInput==null && minParam==null) return Response.status(Status.NOT_FOUND).build();
         
         
         try{
@@ -181,6 +199,13 @@ public class ModelsResource {
                 userId = authProcessor.getUserIdByHash(hash, false); //cookie
             
         }catch(Exception ex){}
+        
+        if(userId == null)
+        {
+            if(queryInput != null) userId = authProcessor.getUserIdByLogin(queryInput);
+            else return Response.status(Status.FORBIDDEN).build();  
+        }
+        
         
         if(userId == null) return Response.status(Status.FORBIDDEN).build();
          
@@ -206,35 +231,65 @@ public class ModelsResource {
 
         
         
-        if(procResultJson.contains(":")) return Response.status(Status.FOUND).entity(procResultJson).build();
+        if(procResultJson.contains(":")) return Response.status(Status.OK).entity(procResultJson).build();
         else return Response.status(Status.NOT_FOUND).build();
     }
     
     
-    @PUT
-    @Path("/{path:.*}")
+    @POST
+//    @Path("{path:.*}")
+    @Path("models{innerDirs:.*}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response putModelByPath(
             String body,
-            @PathParam("path") String path, 
+            @PathParam("innerDirs") String innerDirs,
+            @QueryParam("user") String queryInput,
             @Context HttpServletRequest requestContext,
             @Context HttpHeaders headers) 
     {
         
+        System.out.println("innerDirs: " + innerDirs);
         
-        String hash = headers.getCookies().get("session").getValue();//hash from cookie
+        System.out.println("queryInput: " + queryInput);
         
+        String path = "";
+        if(innerDirs == null)
+            return Response.status(Status.NOT_FOUND).build();
+        else path = innerDirs;
+        
+        
+        
+        
+        String hash = null;
         String userId = null;
+        String name = null;
         
-        if(hash==null || hash.isEmpty()){
-            hash = headers.getHeaderString("Content-Sidkey");//appkey
-            userId = authProcessor.getUserIdByHash(hash, true);
+//        if(!path.contains("/") && queryInput==null && minParam==null) return Response.status(Status.NOT_FOUND).build();
+        
+        
+        try{
+            hash = headers.getCookies().get("session").getValue();//hash from cookie
+
+            if(hash==null || hash.isEmpty()){
+                hash = headers.getHeaderString("Content-Sidkey");//appkey
+                userId = authProcessor.getUserIdByHash(hash, true);
+            }
+            else 
+                userId = authProcessor.getUserIdByHash(hash, false); //cookie
+            
+        }catch(Exception ex){}
+        
+        if(userId == null)
+        {
+            if(queryInput != null) userId = authProcessor.getUserIdByLogin(queryInput);
+            else return Response.status(Status.FORBIDDEN).build();  
         }
-        else 
-            userId = authProcessor.getUserIdByHash(hash, false); //cookie
+        
         
         if(userId == null) return Response.status(Status.FORBIDDEN).build();
          
+        
+        
         JsonParser parser = new JsonParser();
 //        String newValue = parser.parse(body).getAsJsonObject().get("value").getAsString();
 
@@ -256,8 +311,135 @@ public class ModelsResource {
 //        if(resultStatus != null && resultStatus.equals("OK")) return Response.status(Status.FOUND).build();
 //        else return Response.status(Status.NOT_FOUND).build();
         
-        return Response.status(Status.FOUND).build();
+        return Response.status(Status.OK).build();
     }
+    
+    
+
+    
+    
+//    
+//    
+//    
+//    @POST
+//    @Path("/snapshot")
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    @Produces(MediaType.APPLICATION_JSON)
+////    public String postTestModelJson(@Context UriInfo uriInfo, @FormParam("put_test_json") String jsonInput) {
+//    public Response saveModels(
+//            String body, 
+//            @Context UriInfo uriInfo,
+//            @QueryParam("user") String queryInput, 
+//            @Context HttpServletRequest requestContext,
+//            @Context HttpHeaders headers) 
+//    {
+//        
+//        String hash = null;
+//                
+//        try{
+//            hash = headers.getCookies().get("session").getValue();
+//        }catch(Exception ex){}
+//        //hash from cookie
+//        
+//        String userId = null;
+//        
+//        if(hash==null || hash.isEmpty()){
+//            hash = headers.getHeaderString("Content-Sidkey");//appkey
+//            userId = authProcessor.getUserIdByHash(hash, true);
+//        }
+//        else 
+//            userId = authProcessor.getUserIdByHash(hash, false); //cookie
+//        
+//        if(userId == null) Response.status(Status.FORBIDDEN).build();
+//        
+//        if(userId == null)
+//        {
+//            if(queryInput != null) userId = authProcessor.getUserIdByLogin(queryInput);
+//            else Response.status(Status.BAD_REQUEST).build();  
+//        }
+//        
+//        if(userId == null) Response.status(Status.FORBIDDEN).build();   
+//        
+//        //System.out.println(body);
+//        
+//        ArrayList<Model> models = saveModelProcessor.delsertModelsFromShanpshot(body, userId);
+//        
+//        System.out.println("models.size(): " + models.size());
+//        
+//        JsonParser parser = new JsonParser();
+//        
+//  
+//        
+//        
+////        String id = "";
+////        JsonElement jsonId = parser.parse(body).getAsJsonObject().get("id");
+////        
+////        if(jsonId.isJsonNull()){
+////            id = "null";
+////        }
+////        else id = jsonId.getAsString();
+////        
+////        com.google.gson.JsonArray dashboards = parser.parse(body).getAsJsonObject().getAsJsonArray("dashboards");
+////        
+////        Snapshot snapshot = new Snapshot(id);
+////        
+////        snapshot.addAllModels(models);
+////        
+////        
+////        
+////        
+////        return Response.status(Status.ACCEPTED).entity(snapshot.toString()).build();
+//        
+//        return Response.status(Status.ACCEPTED).build();
+//    }
+//
+//    
+//    @GET
+//    @Path("/snapshot")
+//    @Produces(MediaType.APPLICATION_JSON)
+////    public String postTestModelJson(@Context UriInfo uriInfo, @FormParam("put_test_json") String jsonInput) {
+//    public Response loadModels( 
+//            @Context UriInfo uriInfo,
+//            @QueryParam("user") String queryInput,
+//            @Context HttpServletRequest requestContext,
+//            @Context HttpHeaders headers) 
+//    {
+//        
+//        String hash = null;
+//                
+//        try{
+//            hash = headers.getCookies().get("session").getValue();
+//        }catch(Exception ex){}
+//        //hash from cookie
+//        
+//        String userId = null;
+//        
+//        if(hash==null || hash.isEmpty()){
+//            hash = headers.getHeaderString("Content-Sidkey");//appkey
+//            userId = authProcessor.getUserIdByHash(hash, true);
+//        }
+//        else 
+//            userId = authProcessor.getUserIdByHash(hash, false); //cookie
+//        
+//        if(userId == null)
+//        {
+//            if(queryInput != null) userId = authProcessor.getUserIdByLogin(queryInput);
+//            else Response.status(Status.BAD_REQUEST).build();  
+//        }
+//        
+//        if(userId == null) Response.status(Status.FORBIDDEN).build();  
+//
+//        ArrayList<Model> models = loadModelProcessor.getModelsFromDB(userId);
+//        
+//        Snapshot snapshot = new Snapshot();
+//        
+//        if(models != null && !models.isEmpty()) snapshot.addAllModels(models);
+//        
+//        
+//        
+//        
+//        return Response.status(Status.ACCEPTED).entity(snapshot.toJsonString()).build();
+//    }
     
     
     @POST
@@ -269,7 +451,7 @@ public class ModelsResource {
             String body, 
             @Context UriInfo uriInfo, 
             @FormParam("put_test_json") String formInput, 
-            @QueryParam("put_test_json") String queryInput, 
+            @QueryParam("user") String queryInput,
             @Context HttpServletRequest requestContext,
             @Context HttpHeaders headers) 
     {
@@ -294,10 +476,6 @@ public class ModelsResource {
         
         return Response.noContent().build();
     }    
-    
-    
-    
- 
     
    
     

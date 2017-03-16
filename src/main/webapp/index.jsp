@@ -16,6 +16,7 @@
         <jsp:include page="template/default/chunks/head.jsp" >
             <jsp:param name="pageName" value="<%=pageName%>" />
         </jsp:include>
+        <jsp:include page="template/default/chunks/head_scripts.jsp" />
     </head>
   <body>
     

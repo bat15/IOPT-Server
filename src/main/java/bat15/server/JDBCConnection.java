@@ -24,7 +24,6 @@ public class JDBCConnection {
     
     public enum RequestType { JARUS, DPI };
 //    private final Map<String, HTableInterface> hbaseTables = new HashMap<>();
-    private boolean isDpi;
     
 //    String dbHost = "localhost";
 //    String dbPort = "5432";
@@ -33,7 +32,7 @@ public class JDBCConnection {
 //    String dbPassword = "1234";
 
     
-    Connection jdbcConn = null;
+    Connection connection = null;
 
     private JDBCConnection(String host, String port, String dbName, String user, String password) throws SQLException{
 
@@ -55,7 +54,7 @@ public class JDBCConnection {
         url = "jdbc:postgresql://"+ host +":"+port+"/"+dbName+"?user="+user+"&password="+password+"&ssl=false";
 
 
-        jdbcConn = DriverManager.getConnection(url);
+        connection = DriverManager.getConnection(url);
 
     }
     
@@ -70,9 +69,9 @@ public class JDBCConnection {
 //    }  
     public void disconnect()
     {
-        if (jdbcConn != null)
+        if (connection != null)
         {
-            try { jdbcConn.close(); } catch (SQLException e) {}
+            try { connection.close(); } catch (SQLException e) {}
         }      
         
         System.out.println("JDBC Connection closed");
@@ -96,9 +95,9 @@ public class JDBCConnection {
         
         try
         {  
-            if(jdbcConn == null) System.out.println("!!!!!!!!!!! jdbcConn Nullpointer ERROR !!!!!");
+            if(connection == null) System.out.println("!!!!!!!!!!! connection Nullpointer ERROR !!!!!");
             
-            stmt = jdbcConn.createStatement();
+            stmt = connection.createStatement();
             String sql;
             sql = " SELECT * FROM table " + 
                   " WHERE id='" + k + 
@@ -128,7 +127,7 @@ public class JDBCConnection {
 
         int resultSize = 0;
         
-        try (Statement results = jdbcConn.createStatement()) {
+        try (Statement results = connection.createStatement()) {
           try (ResultSet rs = results.executeQuery(query)) {
               
             while (rs.next()) {
@@ -169,7 +168,7 @@ public class JDBCConnection {
                 
 //        System.out.println("SELECT Query: " + selectQuery);
                 
-        try (Statement results = jdbcConn.createStatement()) {   
+        try (Statement results = connection.createStatement()) {   
             try(ResultSet rs = results.executeQuery(selectQuery))
             {
                 rs.next();
@@ -239,7 +238,7 @@ public class JDBCConnection {
 
         
         
-        try (Statement results = jdbcConn.createStatement()) {       
+        try (Statement results = connection.createStatement()) {       
             rs = results.executeQuery(selectQuery);
             rs.next();
             
@@ -281,7 +280,7 @@ public class JDBCConnection {
         
         selectQuery += fromTablesQuery + whereFieldsQuery;
         
-        try (Statement results = jdbcConn.createStatement()) {       
+        try (Statement results = connection.createStatement()) {       
             rs = results.executeQuery(selectQuery);
             rs.next();
             resultValue =  rs.getString(searchKey.replace("\"", ""));
@@ -335,7 +334,7 @@ public class JDBCConnection {
         
 //        System.out.println("SELECT Query: " + selectQuery);
         
-        try (Statement results = jdbcConn.createStatement()) {       
+        try (Statement results = connection.createStatement()) {       
             rs = results.executeQuery(selectQuery);
             rs.next();
             resultValue =  rs.getString(searchKey.replace("\"", ""));
@@ -390,7 +389,7 @@ public class JDBCConnection {
         
 //        System.out.println("SELECT Query: " + selectQuery);
         
-        try (Statement results = jdbcConn.createStatement()) {       
+        try (Statement results = connection.createStatement()) {       
             rs = results.executeQuery(selectQuery);
             rs.next();
             resultValue =  rs.getString(searchKey.replace("\"", ""));
@@ -446,7 +445,7 @@ public class JDBCConnection {
         
         int resultSize = 0;
         
-        try (Statement results = jdbcConn.createStatement()) {
+        try (Statement results = connection.createStatement()) {
           try (ResultSet rs = results.executeQuery(selectQuery)) {
               
             while (rs.next()) {
@@ -528,7 +527,7 @@ public class JDBCConnection {
         
         
         
-        try (Statement results = jdbcConn.createStatement()) {
+        try (Statement results = connection.createStatement()) {
           try (ResultSet rs = results.executeQuery(selectQuery)) {
               
              
@@ -567,7 +566,7 @@ public class JDBCConnection {
     
     public HashMap<String, String> selectScriptValueByPath(HashMap<String, String> pathUnits, String userId)
     {
-        String selectQuery = "SELECT \"script\".\"value\",\"script\".\"name\"";
+        String selectQuery = "SELECT \"script\".\"value\",\"script\".\"value\",\"script\".\"name\"";
         
         String fromQuery = " FROM \"model\",\"object\",\"property\",\"script\"";
         
@@ -583,7 +582,7 @@ public class JDBCConnection {
         
         HashMap<String, String> result = new HashMap();
         
-        try (Statement results = jdbcConn.createStatement()) {
+        try (Statement results = connection.createStatement()) {
             try (ResultSet rs = results.executeQuery(selectQuery)) {
                 
                 rs.next();
@@ -601,7 +600,7 @@ public class JDBCConnection {
     
     public HashMap<String, String> selectPropertyValueByPath(HashMap<String, String> pathUnits, String userId)
     {
-        String selectQuery = "SELECT \"property\".\"value\",\"property\".\"name\",\"property\".\"type\"";
+        String selectQuery = "SELECT \"property\".\"id\",\"property\".\"value\",\"property\".\"name\",\"property\".\"type\"";
         
         String fromQuery = " FROM \"model\",\"object\",\"property\"";
         
@@ -616,7 +615,7 @@ public class JDBCConnection {
         
         HashMap<String, String> result = new HashMap();
         
-        try (Statement results = jdbcConn.createStatement()) {
+        try (Statement results = connection.createStatement()) {
             try (ResultSet rs = results.executeQuery(selectQuery)) {
                 
                 rs.next();
@@ -635,7 +634,7 @@ public class JDBCConnection {
     
     public HashMap<String, String> selectObjectValueByPath(HashMap<String, String> pathUnits, String userId)
     {
-        String selectQuery = "SELECT \"object\".\"value\",\"object\".\"name\"";
+        String selectQuery = "SELECT \"object\".\"id\",\"object\".\"name\"";
         
         String fromQuery = " FROM \"model\",\"object\"";
         
@@ -650,7 +649,7 @@ public class JDBCConnection {
         
         HashMap<String, String> result = new HashMap();
         
-        try (Statement results = jdbcConn.createStatement()) {
+        try (Statement results = connection.createStatement()) {
             try (ResultSet rs = results.executeQuery(selectQuery)) {
                 
                 rs.next();
@@ -684,7 +683,7 @@ public class JDBCConnection {
         
         HashMap<String, String> result = new HashMap();
         
-        try (Statement results = jdbcConn.createStatement()) {
+        try (Statement results = connection.createStatement()) {
             try (ResultSet rs = results.executeQuery(selectQuery)) {
                 
                 if(rs.next()){//not empty - do update
@@ -729,7 +728,7 @@ public class JDBCConnection {
         
         HashMap<String, String> result = new HashMap();
         
-        try (Statement results = jdbcConn.createStatement()) {
+        try (Statement results = connection.createStatement()) {
             try (ResultSet rs = results.executeQuery(selectQuery)) {
                 
                 if(rs.next()){//not empty - do update
@@ -762,7 +761,7 @@ public class JDBCConnection {
     
     public HashMap<String, String> selectModelValueByPath(HashMap<String, String> pathUnits, String userId)
     {
-        String selectQuery = "SELECT \"model\".\"value\",\"model\".\"name\"";
+        String selectQuery = "SELECT \"model\".\"id\",\"model\".\"name\"";
         
         String fromQuery = " FROM \"model\"";
         
@@ -775,7 +774,7 @@ public class JDBCConnection {
         
         HashMap<String, String> result = new HashMap();
         
-        try (Statement results = jdbcConn.createStatement()) {
+        try (Statement results = connection.createStatement()) {
             try (ResultSet rs = results.executeQuery(selectQuery)) {
                 
                 rs.next();
@@ -837,7 +836,7 @@ public class JDBCConnection {
 //        System.out.println("INSERT Query: " + insertQuery);
         
         
-        try (Statement results = jdbcConn.createStatement()) {       
+        try (Statement results = connection.createStatement()) {       
 //            results.executeQuery(insertQuery);
             results.execute(insertQuery);
         }
@@ -874,7 +873,7 @@ public class JDBCConnection {
 //        System.out.println("MAX_ID selectQuery: " + selectQuery);
         
         
-        try (Statement results = jdbcConn.createStatement()) {   
+        try (Statement results = connection.createStatement()) {   
             try(ResultSet rs = results.executeQuery(selectQuery))
             {
                 rs.next();
@@ -903,7 +902,7 @@ public class JDBCConnection {
         
         selectQuery += fromTablesQuery + whereConditionsQuery;
 
-        try (Statement results = jdbcConn.createStatement()) {   
+        try (Statement results = connection.createStatement()) {   
 
             results.executeUpdate(selectQuery);
  
@@ -923,7 +922,7 @@ public class JDBCConnection {
 
         selectQuery += fromTablesQuery + whereConditionsQuery;
 
-        try (Statement results = jdbcConn.createStatement()) {   
+        try (Statement results = connection.createStatement()) {   
             try(ResultSet rs = results.executeQuery(selectQuery))
             {
                 rs.next();
@@ -949,7 +948,7 @@ public class JDBCConnection {
 
         selectQuery += fromTablesQuery;
 
-        try (Statement results = jdbcConn.createStatement()) {   
+        try (Statement results = connection.createStatement()) {   
             try(ResultSet rs = results.executeQuery(selectQuery))
             {
                 rs.next();
@@ -1027,7 +1026,7 @@ public class JDBCConnection {
         System.out.println("UPDATE Query: " + updateQuery);
         
         
-        try (Statement results = jdbcConn.createStatement()) {       
+        try (Statement results = connection.createStatement()) {       
 //            results.executeQuery(insertQuery);
             results.executeUpdate(updateQuery);
         }

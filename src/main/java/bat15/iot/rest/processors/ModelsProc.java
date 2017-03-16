@@ -6,6 +6,8 @@
 package bat15.iot.rest.processors;
 
 
+import bat15.iot.entities.Model;
+import bat15.iot.entities.Snapshot;
 import bat15.server.Settings;
 import bat15.server.JDBCConnection;
 import bat15.server.Security;
@@ -39,6 +41,8 @@ import javax.annotation.Resource;
 
 
 import java.security.MessageDigest;
+import javax.ejb.EJB;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -55,6 +59,13 @@ public class ModelsProc {
     
     JDBCConnection connection;
 
+    @EJB (beanName="LoadModelProc")
+    LoadModelProc loadModelProcessor;  
+    
+    @EJB (beanName="SaveModelProc")
+    SaveModelProc saveModelProcessor;   
+    
+    
     private final Object lock = new Object();
     
     @PostConstruct
@@ -161,19 +172,19 @@ public class ModelsProc {
     
     
     
-    public String getModel(String modelQuery, String userId, String newValue, boolean isMinimal){
+    public String getModel(String innerDirs, String userId, String newValue, boolean isMinimal){
         
         String testData = "FAIL";
         String jsonData = "NONE";
          
-        if(modelQuery == null) {
+        if(innerDirs == null) {
             testData = "[{error: null}]";
             return testData;
         }
-        else if(modelQuery.isEmpty()) {
-            testData = "[{error : no_model_name_defined}]";
-            return testData;
-        }
+//        else if(innerDirs.isEmpty()) {
+//            testData = "[{error : no_model_name_defined}]";
+//            return testData;
+//        }
         
         String model = "";
         String object = "";
@@ -182,19 +193,48 @@ public class ModelsProc {
         
         ArrayList<String> paths = new ArrayList();
         
-        System.out.println("modelQuery: " + modelQuery);
-        
-        paths.addAll(Arrays.asList(modelQuery.split("/")));
+        System.out.println("modelQuery: " + innerDirs);
         
         
+        
+
+        if(innerDirs.isEmpty()){
+            
+            System.out.println("innerDirs Empty, execute snapshot");
+            try{
+            System.out.println("case 0 size: " + paths.size());
+
+            if(newValue == null)
+            {
+                ArrayList<Model> models = loadModelProcessor.getModelsFromDB(userId);
+
+                Snapshot snapshot = new Snapshot();
+
+                if(models != null && !models.isEmpty()) snapshot.addAllModels(models);
+
+                return snapshot.toJsonString();
+            }else{
+                ArrayList<Model> models = saveModelProcessor.delsertModelsFromShanpshot(newValue, userId);
+
+                System.out.println("models.size(): " + models.size());
+                return null;
+
+            }  
+
+            }catch(Exception ex){}   
+        
+        }
+        
+        String fullPath = innerDirs.substring(1);
+        
+        
+        paths.addAll(Arrays.asList(fullPath.split("/")));
         
         
         switch (paths.size()) {
-            case 0://error - no model_name defined
-                testData = "[{error : no_model_name_defined}]";
-                System.out.println("case 0 size: " + paths.size());
-                System.out.println("!!! " + testData);
-                
+            case 0://snapshot
+
+
                 break;
             case 1://model_name
                 System.out.println("case 1 size: " + paths.size());
@@ -208,7 +248,7 @@ public class ModelsProc {
   
                     if(newValue == null) {
                         
-                        System.out.println("GET SCRIPT PATH: " + pathUnits.toString());
+                        System.out.println("GET MODEL PATH: " + pathUnits.toString());
                         value = getModelJson(pathUnits, userId);
                         
                         System.out.println("Script value: " + value);
@@ -231,7 +271,7 @@ public class ModelsProc {
   
                     if(newValue == null) {
                         
-                        System.out.println("GET SCRIPT PATH: " + pathUnits.toString());
+                        System.out.println("GET OBJECT PATH: " + pathUnits.toString());
                         value = getObjectJson(pathUnits, userId);
                         
                         System.out.println("Script value: " + value);
@@ -352,9 +392,10 @@ public class ModelsProc {
         if(!result.isEmpty())
         {
             if(!isMinimal){
-                    jsonResult += 
-                            "\"name\":\"" + result.get("name") + "\"," +
-                            "\"value\":" + result.get("value");
+                    jsonResult += ""
+                            + "\"name\":\"" + result.get("name") + "\","
+//                            + "\"id\":\"" + result.get("id") + "\","
+                            + "\"value\":\"" + result.get("value") + "\"";
 
             }
             else{
@@ -388,8 +429,10 @@ public class ModelsProc {
         {
             if(!isMinimal){
 
-                jsonResult += "\"name\":\"" + result.get("name") + "\","
-                        + "\"type\":" + result.get("type") + ","
+                jsonResult += ""
+                        + "\"name\":\"" + result.get("name") + "\","
+//                        + "\"id\":\"" + result.get("id") + "\","
+                        + "\"type\":\"" + result.get("type") + "\","
                         + "\"value\":\"" + result.get("value") + "\"";
             }else
             {
@@ -415,7 +458,7 @@ public class ModelsProc {
         }
         
         jsonResult = "{"
-                + "\"name\":" + result.get("name")
+                + "\"name\":\"" + result.get("name") + "\""
                 + "}";
         
         return jsonResult;
@@ -433,7 +476,7 @@ public class ModelsProc {
         }
         
         jsonResult = "{"
-                + "\"name\":" + result.get("name")
+                + "\"name\":\"" + result.get("name") + "\""
                 + "}";
         
         return jsonResult;

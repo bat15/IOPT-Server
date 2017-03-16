@@ -11,7 +11,7 @@
 
 <% 
     String tableName = "properties";
-    String user = "devops";
+    String user = "iks";
     Date date = new Date();
     String strDate = date.toString();
 

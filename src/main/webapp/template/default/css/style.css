@@ -1064,7 +1064,9 @@ background: #B0E0E6;
 	width: 520px;
 }
 
-
+.ui-draggable, .ui-droppable {
+	background-position: top;
+}
 
 /*-----------  ----------*/
 

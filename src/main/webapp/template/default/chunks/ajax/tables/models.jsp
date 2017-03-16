@@ -17,7 +17,7 @@
 
 <% 
     String tableName = "models";
-    String user = "devops";
+    String user = "iks";
     Date date = new Date();
     String strDate = date.toString();
 

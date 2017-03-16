@@ -205,12 +205,11 @@ public class SyncResource {
         ArrayList<Model> models = saveModelProcessor.delsertModelsFromShanpshot(body, userId);
         
         System.out.println("models.size(): " + models.size());
-        
-        JsonParser parser = new JsonParser();
-        
-  
+     
         
         
+//        JsonParser parser = new JsonParser();
+//        
 //        String id = "";
 //        JsonElement jsonId = parser.parse(body).getAsJsonObject().get("id");
 //        

@@ -59,7 +59,7 @@ public class ModelRestClient {
         if (user != null) {
             resource = resource.queryParam("user", user);
         }
-        resource = resource.path("snapshot");
+        resource = resource.path("models");
 
         Invocation.Builder invocationBuilder =  resource.request(MediaType.APPLICATION_JSON);
         Response response = invocationBuilder.get();

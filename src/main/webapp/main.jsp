@@ -27,7 +27,7 @@
 
 <%!
     String pageName = "main"; 
-    String user = "devops";
+    String user = "iks";
     Date date = new Date();
     String strDate = date.toString();
 
@@ -37,6 +37,22 @@
         <jsp:include page="template/default/chunks/head.jsp" >
             <jsp:param name="pageName" value="<%=pageName%>" />
         </jsp:include>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+      $( function() {
+        $( "#tabs" ).tabs({
+          beforeLoad: function( event, ui ) {
+            ui.jqXHR.fail(function() {
+              ui.panel.html(
+                "Couldn't load this tab. We'll try to fix this as soon as possible. " +
+                "If this wouldn't be a demo." );
+            });
+          }
+        });
+      } );
+    </script>   
     </head>
     <body>
    <jsp:include page="template/default/chunks/header.jsp" >
@@ -61,33 +77,6 @@
 
       </div>       
     </div>
-
-<!--        <script>
-        $('#datetimepicker1').datetimepicker({
-                  lang:'ru'     ,
-                  format:'H:i d.m.Y'
-                });
-        </script>  -->
-
-
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
-
-    <script>
-
-        
-      $( "#tabs" ).tabs({
-        beforeLoad: function( event, ui ) {
-          ui.jqXHR.fail(function() {
-            ui.panel.html(
-              "Ошибка!  " +
-              "Нет данных." );
-          });
-        }
-      });
-    } );
-    </script>
 
 
 
