@@ -78,6 +78,7 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response.Status;
 
 /**
@@ -285,6 +286,16 @@ public class ModelsResource {
             else return Response.status(Status.FORBIDDEN).build();  
         }
         
+        int hNum = 1;
+        for(String header:headers.getRequestHeaders().keySet())
+        {
+            System.out.println("header " + hNum + ": " + header);
+            hNum++;
+        }
+        
+        String valueHeader = headers.getRequestHeader("value").get(0);
+        
+        System.out.println("valueHeader: " + valueHeader);
         
         if(userId == null) return Response.status(Status.FORBIDDEN).build();
          
@@ -292,19 +303,30 @@ public class ModelsResource {
         
         JsonParser parser = new JsonParser();
 //        String newValue = parser.parse(body).getAsJsonObject().get("value").getAsString();
-
+        System.out.println("body: " + body);
         String newValue = body.substring(body.indexOf(":")+1); //delete all, what goes befor first comma
         
         
-        
-        newValue=newValue.substring(0, newValue.lastIndexOf("}")).trim().replace("\"", "");
-       
+        try{
+            newValue=newValue.substring(0, newValue.lastIndexOf("}")).trim().replace("\"", "");
+        }catch(Exception ex){
+            //return Response.status(Status.OK).build();
+            
+            try{
+                newValue=valueHeader;
+            }catch(Exception e){
+                return Response.status(Status.BAD_REQUEST).build();
+            }
+        }
             
             
         System.out.println("PUT newValue: " + newValue);
         
-        String resultStatus = modelsProcessor.getModel(path, userId, newValue, false);
-        
+        String resultStatus = "";
+        if(newValue != null)
+            resultStatus = modelsProcessor.getModel(path, userId, newValue, false);
+        else
+            return Response.status(Status.BAD_REQUEST).build();
 
         
         

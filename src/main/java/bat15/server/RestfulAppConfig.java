@@ -35,25 +35,6 @@ public class RestfulAppConfig extends Application {
         resources.add(bat15.iot.rest.resources.ModelsResource.class);
         resources.add(bat15.iot.rest.resources.SyncResource.class);
         resources.add(bat15.iot.rest.resources.TestResource.class);
-        resources.add(com.fasterxml.jackson.jaxrs.base.JsonMappingExceptionMapper.class);
-        resources.add(com.fasterxml.jackson.jaxrs.base.JsonParseExceptionMapper.class);
-        resources.add(com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider.class);
-        resources.add(com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider.class);
-        resources.add(com.fasterxml.jackson.jaxrs.json.JsonMappingExceptionMapper.class);
-        resources.add(com.fasterxml.jackson.jaxrs.json.JsonParseExceptionMapper.class);
-        resources.add(org.eclipse.persistence.jpa.rs.exceptions.JPARSExceptionMapper.class);
-        resources.add(org.eclipse.persistence.jpa.rs.resources.EntityResource.class);
-        resources.add(org.eclipse.persistence.jpa.rs.resources.MetadataResource.class);
-        resources.add(org.eclipse.persistence.jpa.rs.resources.PersistenceResource.class);
-        resources.add(org.eclipse.persistence.jpa.rs.resources.PersistenceUnitResource.class);
-        resources.add(org.eclipse.persistence.jpa.rs.resources.QueryResource.class);
-        resources.add(org.eclipse.persistence.jpa.rs.resources.SingleResultQueryResource.class);
-        resources.add(org.eclipse.persistence.jpa.rs.resources.unversioned.EntityResource.class);
-        resources.add(org.eclipse.persistence.jpa.rs.resources.unversioned.PersistenceResource.class);
-        resources.add(org.eclipse.persistence.jpa.rs.resources.unversioned.PersistenceUnitResource.class);
-        resources.add(org.eclipse.persistence.jpa.rs.resources.unversioned.QueryResource.class);
-        resources.add(org.eclipse.persistence.jpa.rs.resources.unversioned.SingleResultQueryResource.class);
-        resources.add(org.glassfish.jersey.server.wadl.internal.WadlResource.class);
     }
     
 }
